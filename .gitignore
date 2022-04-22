@@ -1,0 +1,8 @@
+node_modules/
+artifacts/
+types/
+cache/
+.env
+
+.idea
+.DS_Store
