@@ -23,6 +23,8 @@ export function handleNewQuestionAdded(event: NewQuestionAdded): void {
   question.uri = event.params.contentURI;
   question.createdTxHash = event.transaction.hash.toHexString();
   question.status = "open";
+  question.title = event.params.title;
+  question.tags = event.params.tags;
 
   if (!question.numAnswers) {
     question.numAnswers = zero.toString();
@@ -84,6 +86,7 @@ export function handleNewAnswerAdded(event: NewAnswerAdded): void {
   answer.answerer = event.params.answerer.toHexString();
   answer.uri = event.params.contentURI;
   answer.createdTxHash = event.transaction.hash.toHexString();
+  answer.receivedReward = zero.toString();
 
   answer.save();
 }

@@ -64,6 +64,14 @@ export class NewQuestionAdded__Params {
   get contentURI(): string {
     return this._event.parameters[2].value.toString();
   }
+
+  get title(): string {
+    return this._event.parameters[3].value.toString();
+  }
+
+  get tags(): Array<string> {
+    return this._event.parameters[4].value.toStringArray();
+  }
 }
 
 export class OwnershipTransferred extends ethereum.Event {
@@ -522,6 +530,14 @@ export class CreateQuestionCall__Inputs {
 
   get ipfsContentHash(): string {
     return this._call.inputValues[0].value.toString();
+  }
+
+  get title(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get tags(): Array<string> {
+    return this._call.inputValues[2].value.toStringArray();
   }
 }
 

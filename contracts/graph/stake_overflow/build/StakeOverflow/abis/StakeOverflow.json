@@ -55,6 +55,18 @@
         "internalType": "string",
         "name": "contentURI",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string[]",
+        "name": "tags",
+        "type": "string[]"
       }
     ],
     "name": "NewQuestionAdded",
@@ -331,6 +343,16 @@
         "internalType": "string",
         "name": "ipfsContentHash",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "tags",
+        "type": "string[]"
       }
     ],
     "name": "createQuestion",

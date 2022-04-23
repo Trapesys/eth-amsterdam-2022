@@ -8,7 +8,7 @@ async function main() {
     await ethers.getContractFactory("StakeOverflow")
   ).attach(STAKE_OVERFLOW_ADDRESS)) as StakeOverflow;
 
-  const tx = await stakeOverflow.rewardDirectly(1, 3, {
+  const tx = await stakeOverflow.rewardDirectly(1, 2, {
     value: ethers.BigNumber.from(10).pow(17),
   });
   console.log("TxHash", tx.hash);

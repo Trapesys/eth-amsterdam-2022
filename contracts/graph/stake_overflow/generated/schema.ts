@@ -18,6 +18,8 @@ export class Question extends Entity {
 
     this.set("questioner", Value.fromString(""));
     this.set("uri", Value.fromString(""));
+    this.set("title", Value.fromString(""));
+    this.set("tags", Value.fromStringArray(new Array(0)));
     this.set("createdTxHash", Value.fromString(""));
     this.set("status", Value.fromString(""));
     this.set("numAnswers", Value.fromString(""));
@@ -67,6 +69,24 @@ export class Question extends Entity {
 
   set uri(value: string) {
     this.set("uri", Value.fromString(value));
+  }
+
+  get title(): string {
+    let value = this.get("title");
+    return value!.toString();
+  }
+
+  set title(value: string) {
+    this.set("title", Value.fromString(value));
+  }
+
+  get tags(): Array<string> {
+    let value = this.get("tags");
+    return value!.toStringArray();
+  }
+
+  set tags(value: Array<string>) {
+    this.set("tags", Value.fromStringArray(value));
   }
 
   get createdTxHash(): string {
@@ -138,6 +158,15 @@ export class Question extends Entity {
 
   set receivedReward(value: string) {
     this.set("receivedReward", Value.fromString(value));
+  }
+
+  get answers(): Array<string> {
+    let value = this.get("answers");
+    return value!.toStringArray();
+  }
+
+  set answers(value: Array<string>) {
+    this.set("answers", Value.fromStringArray(value));
   }
 }
 

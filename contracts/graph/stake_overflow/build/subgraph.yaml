@@ -6,7 +6,7 @@ dataSources:
     network: edge
     name: StakeOverflow
     source:
-      address: "0xa55dB47894767fEf8Da36ad44d0B25c4338E06f9"
+      address: "0x01e4eA882d5Bf72534eFdE1e977B805e032Fa773"
       abi: StakeOverflow
     mapping:
       kind: ethereum/events
@@ -18,7 +18,7 @@ dataSources:
         - name: StakeOverflow
           file: StakeOverflow/abis/StakeOverflow.json
       eventHandlers:
-        - event: NewQuestionAdded(indexed address,uint256,string)
+        - event: NewQuestionAdded(indexed address,uint256,string,string,string[])
           handler: handleNewQuestionAdded
         - event: StakedToQuestion(indexed uint256,indexed address,uint256)
           handler: handleStakedToQuestion

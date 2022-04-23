@@ -8,7 +8,7 @@ async function main() {
     await ethers.getContractFactory("StakeOverflow")
   ).attach(STAKE_OVERFLOW_ADDRESS)) as StakeOverflow;
 
-  const tx = await stakeOverflow.rewardFromPool(1, 3);
+  const tx = await stakeOverflow.rewardFromPool(1, 2);
   console.log("TxHash", tx.hash);
   const r = await tx.wait();
 

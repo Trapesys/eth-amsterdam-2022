@@ -21,7 +21,9 @@ contract StakeOverflow is IStakeOverflow, StakeOverflowStorage, Ownable {
     event NewQuestionAdded(
         address indexed questioner,
         uint256 questionID,
-        string contentURI
+        string contentURI,
+        string title,
+        string[] tags
     );
 
     event StakedToQuestion(
@@ -101,14 +103,14 @@ contract StakeOverflow is IStakeOverflow, StakeOverflowStorage, Ownable {
         payable(msg.sender).transfer(_totalFee);
     }
 
-    function createQuestion(string memory ipfsContentHash)
-        external
-        payable
-        override
-    {
+    function createQuestion(
+        string memory ipfsContentHash,
+        string memory title,
+        string[] memory tags
+    ) external payable override {
         require(msg.value > 0, "need value");
 
-        _createQuestion(ipfsContentHash);
+        _createQuestion(ipfsContentHash, title, tags);
     }
 
     function stakeToQuestion(uint256 questionID)
@@ -161,7 +163,11 @@ contract StakeOverflow is IStakeOverflow, StakeOverflowStorage, Ownable {
     }
 
     // Private Methods
-    function _createQuestion(string memory ipfsContentHash) private {
+    function _createQuestion(
+        string memory ipfsContentHash,
+        string memory title,
+        string[] memory tags
+    ) private {
         address questioner = msg.sender;
         uint256 stakeAmount = msg.value;
 
@@ -176,7 +182,7 @@ contract StakeOverflow is IStakeOverflow, StakeOverflowStorage, Ownable {
 
         string memory contentURI = _content.tokenURI(questionID);
 
-        emit NewQuestionAdded(questioner, questionID, contentURI);
+        emit NewQuestionAdded(questioner, questionID, contentURI, title, tags);
     }
 
     function _stakeToQuestion(

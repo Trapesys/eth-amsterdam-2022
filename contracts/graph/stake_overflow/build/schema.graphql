@@ -2,6 +2,8 @@ type Question @entity {
   id: ID!
   questioner: String!
   uri: String!
+  title: String! @search(by: [term])
+  tags: [String!]!
   createdTxHash: String!
   closedTxHash: String
 
@@ -10,6 +12,8 @@ type Question @entity {
   currentStaked: String!
   totalReward: String!
   receivedReward: String!
+
+  answers: [Answer!]! @derivedFrom(field: "question")
 }
 
 type Answer @entity {

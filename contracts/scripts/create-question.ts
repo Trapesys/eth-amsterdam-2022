@@ -8,10 +8,15 @@ async function main() {
     await ethers.getContractFactory("StakeOverflow")
   ).attach(STAKE_OVERFLOW_ADDRESS)) as StakeOverflow;
 
-  const tx = await stakeOverflow.createQuestion("0x13224343", {
-    value: ethers.BigNumber.from(10).pow(17),
-    gasLimit: "0x50000",
-  });
+  const tx = await stakeOverflow.createQuestion(
+    "0x13224343",
+    "How to use Edge",
+    ["Polygon", "Golang"],
+    {
+      value: ethers.BigNumber.from(10).pow(17),
+      gasLimit: "0x50000",
+    }
+  );
   console.log("TxHash", tx.hash);
   const r = await tx.wait();
 

@@ -2,7 +2,11 @@
 pragma solidity ^0.8.13;
 
 interface IStakeOverflow {
-    function createQuestion(string memory ipfsContentHash) external payable;
+    function createQuestion(
+        string memory ipfsContentHash,
+        string memory title,
+        string[] memory tags
+    ) external payable;
 
     function stakeToQuestion(uint256 questionID) external payable;
 
