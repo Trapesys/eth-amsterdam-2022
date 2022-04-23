@@ -1,0 +1,32 @@
+specVersion: 0.0.2
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    network: edge
+    name: StakeOverflow
+    source:
+      address: "0xa55dB47894767fEf8Da36ad44d0B25c4338E06f9"
+      abi: StakeOverflow
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transfer
+      abis:
+        - name: StakeOverflow
+          file: StakeOverflow/abis/StakeOverflow.json
+      eventHandlers:
+        - event: NewQuestionAdded(indexed address,uint256,string)
+          handler: handleNewQuestionAdded
+        - event: StakedToQuestion(indexed uint256,indexed address,uint256)
+          handler: handleStakedToQuestion
+        - event: NewAnswerAdded(indexed uint256,indexed address,uint256,string)
+          handler: handleNewAnswerAdded
+        - event: Rewarded(indexed uint256,indexed uint256,indexed
+            address,address,address,uint256,uint256,uint256)
+          handler: handleRewarded
+        - event: QuestionClosed(indexed uint256,uint256)
+          handler: handleQuestionClosed
+      file: StakeOverflow/StakeOverflow.wasm

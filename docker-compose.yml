@@ -1,0 +1,166 @@
+version: "3.9"
+
+services:
+
+  # !!! node/folder names must follow the pattern root dir + node number
+
+  ## INIT DATA DIR
+  init-ledge:
+    image: 'trapesys/polygon-ledge'
+    volumes:
+      - node1:/node1
+      - node2:/node2
+      - node3:/node3
+      - node4:/node4
+    networks:
+      - edge-nodes
+    command: ["-mode","init"]
+## GENERATE GENESIS
+  genesis-ledge:
+    image: 'trapesys/polygon-ledge'
+    volumes:
+      - node1:/node1
+      - node2:/node2
+      - node3:/node3
+      - node4:/node4
+      - genesis:/genesis
+    networks:
+      - edge-nodes
+    command: ["-mode","genesis", "-premine", "0x1bF3bE6dFa4A651d81B63d06C8e3b3F5BdA4BB60 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0xA6201B87DF87Cd667Dc71a4A6c7c11a53ac9208D", "-block-gas-limit", "0x500000000000"]
+    depends_on:
+      - "init-ledge"
+
+## RUN NODES
+## Nodes must have the same names as folders in init-legde and genesis-legde
+  node1:
+    image: 'kourin1996/polygon-edge:latest'
+    restart: on-failure
+    volumes:
+      - node1:/data
+      - genesis:/genesis
+    networks:
+      - edge-nodes
+    ports:
+      - 10001:8545
+    command: ["server", "--data-dir","data","--chain","genesis/genesis.json","--libp2p", "0.0.0.0:1478", "--block-gas-target", "0x500000000000"]
+    depends_on:
+      - "genesis-ledge"
+
+  node2:
+    image: 'kourin1996/polygon-edge:latest'
+    restart: on-failure
+    volumes:
+      - node2:/data
+      - genesis:/genesis
+    networks:
+      - edge-nodes
+    ports:
+      - 10002:8545
+    command: ["server", "--data-dir","data","--chain","genesis/genesis.json","--libp2p", "0.0.0.0:1478", "--block-gas-target", "0x500000000000"]
+    depends_on:
+      - "genesis-ledge"
+
+  node3:
+    image: 'kourin1996/polygon-edge:latest'
+    restart: on-failure
+    volumes:
+      - node3:/data
+      - genesis:/genesis
+    networks:
+      - edge-nodes
+    ports:
+      - 10003:8545
+    command: ["server", "--data-dir","data","--chain","genesis/genesis.json","--libp2p", "0.0.0.0:1478", "--block-gas-target", "0x500000000000"]
+    depends_on:
+      - "genesis-ledge"
+
+  node4:
+    image: 'kourin1996/polygon-edge:latest'
+    restart: on-failure
+    volumes:
+      - node4:/data
+      - genesis:/genesis
+    networks:
+      - edge-nodes
+    ports:
+      - 10004:8545
+    command: ["server", "--data-dir","data","--chain","genesis/genesis.json","--libp2p", "0.0.0.0:1478", "--block-gas-target", "0x500000000000"]
+    depends_on:
+      - "genesis-ledge"
+
+  proxy:
+    image: 'nginx:alpine'
+    restart: on-failure
+    volumes:
+      - ./nginx:/etc/nginx
+    ports:
+      - 80:8080
+    networks:
+     - edge-nodes
+
+  graph-node:
+    image: graphprotocol/graph-node
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8020:8020'
+      - '8030:8030'
+      - '8040:8040'
+    depends_on:
+      - ipfs
+      - postgres
+      - node1
+      - node2
+      - node3
+      - node4
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      postgres_host: postgres
+      postgres_user: graph-node
+      postgres_pass: let-me-in
+      postgres_db: graph-node
+      ipfs: 'ipfs:5001'
+      ethereum: 'edge:http://node1:8545'
+      GRAPH_LOG: debug
+      ETHEREUM_REORG_THRESHOLD: 0
+      ETHEREUM_ANCESTOR_COUNT: 0
+    networks:
+     - edge-nodes
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.23
+    ports:
+      - '5001:5001'
+    volumes:
+      - ./data/ipfs:/data/ipfs
+    networks:
+     - edge-nodes
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+    command:
+      [
+        "postgres",
+        "-cshared_preload_libraries=pg_stat_statements"
+      ]
+    environment:
+      POSTGRES_USER: graph-node
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph-node
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+     - edge-nodes
+
+networks:
+  edge-nodes:
+
+volumes:
+  node1:
+  node2:
+  node3:
+  node4:
+  genesis:
+  ipfs:
+  postgres:

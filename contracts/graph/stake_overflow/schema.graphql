@@ -1,0 +1,23 @@
+type Question @entity {
+  id: ID!
+  questioner: String!
+  uri: String!
+  createdTxHash: String!
+  closedTxHash: String
+
+  status: String!
+  numAnswers: String!
+  currentStaked: String!
+  totalReward: String!
+  receivedReward: String!
+}
+
+type Answer @entity {
+  id: ID!
+  question: Question!
+  answerer: String!
+  uri: String!
+  createdTxHash: String!
+
+  receivedReward: String!
+}

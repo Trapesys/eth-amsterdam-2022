@@ -9,7 +9,13 @@
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
     "lint": "solhint 'contracts/**/*.sol'",
-    "balances": "npx hardhat run scripts/balances.ts --network polygonedge"
+    "balances": "npx hardhat run scripts/balances.ts --network polygonedge",
+    "deploy-stake-overflow": "npx hardhat run scripts/deploy-stake-overflow.ts --network polygonedge",
+    "create-question": "npx hardhat run scripts/create-question.ts --network polygonedge",
+    "stake-to-question": "npx hardhat run scripts/stake-to-question.ts --network polygonedge",
+    "create-answer": "npx hardhat run scripts/create-answer.ts --network polygonedge",
+    "reward-from-pool": "npx hardhat run scripts/reward-from-pool.ts --network polygonedge",
+    "reward-directly": "npx hardhat run scripts/reward-directly.ts --network polygonedge"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
@@ -42,5 +48,8 @@
     "ts-node": "^10.7.0",
     "typechain": "^5.2.0",
     "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.5.0"
   }
 }
