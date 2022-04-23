@@ -13,7 +13,10 @@ const SectionTitle: FC<ISectionTitleProps> = (props) => {
 const useStyles = makeStyles((theme) => {
   return {
     sectionTitle: {
-      color: theme.palette.custom.darkGray
+      color: theme.palette.custom.darkGray,
+      fontFamily: 'Poppins',
+      fontWeight: 700,
+      fontSize: theme.typography.pxToRem(16)
     }
   };
 });

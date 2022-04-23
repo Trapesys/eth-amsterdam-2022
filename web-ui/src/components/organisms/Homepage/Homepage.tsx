@@ -6,7 +6,9 @@ import { IHomepageProps } from './homepage.types';
 const Homepage: FC<IHomepageProps> = () => {
   return (
     <Box display={'flex'}>
-      <Menu />
+      <Box mt={6}>
+        <Menu />
+      </Box>
     </Box>
   );
 };

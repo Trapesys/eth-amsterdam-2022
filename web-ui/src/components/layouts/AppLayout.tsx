@@ -8,7 +8,7 @@ const AppLayout: FC<IAppLayoutProps> = (props) => {
   return (
     <Box width={'100%'} height={'100%'}>
       <TopBar />
-      <Container maxWidth={'lg'} fixed={true}>
+      <Container maxWidth={'md'} fixed={true}>
         <Outlet />
       </Container>
     </Box>

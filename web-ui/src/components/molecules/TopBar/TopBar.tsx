@@ -1,5 +1,7 @@
 import { Box, Container, makeStyles } from '@material-ui/core';
 import { FC } from 'react';
+import SearchBar from '../SearchBar/SearchBar';
+import UserMenu from '../UserMenu/UserMenu';
 import { ITopBarProps } from './topBar.types';
 
 const TopBar: FC<ITopBarProps> = () => {
@@ -7,12 +9,11 @@ const TopBar: FC<ITopBarProps> = () => {
 
   return (
     <Box className={classes.topBarOuter}>
-      <Container fixed={true} maxWidth={'lg'}>
+      <Container fixed={true} maxWidth={'md'}>
         <Box className={classes.topBarInner}>
           <Box>Logo</Box>
-          <Box>Search box</Box>
-
-          <Box>Connect wallet</Box>
+          <SearchBar />
+          <UserMenu />
         </Box>
       </Container>
     </Box>

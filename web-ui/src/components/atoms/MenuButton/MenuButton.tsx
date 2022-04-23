@@ -5,13 +5,14 @@ import { IMenuButtonProps } from './menuButton.types';
 
 const MenuButton: FC<IMenuButtonProps> = (props) => {
   const classes = useStyles();
-  const { text, onClick, startIcon } = props;
+  const { text, onClick, startIcon, isActive } = props;
 
   return (
     <Button
       onClick={onClick}
-      className={clsx(classes.menuButtonCommon, classes.menuButtonActive)}
-      color={'secondary'}
+      className={clsx(classes.menuButtonCommon, {
+        [classes.menuButtonActive]: isActive
+      })}
       startIcon={startIcon}
     >
       {text}
@@ -23,9 +24,14 @@ const useStyles = makeStyles((theme) => {
   return {
     menuButtonCommon: {
       fontFamily: 'Poppins',
-      fontWeight: 600
+      fontWeight: 600,
+      color: theme.palette.custom.darkGray,
+      width: '120px'
     },
-    menuButtonActive: {}
+    menuButtonActive: {
+      color: theme.palette.custom.trapesysGreen,
+      backgroundColor: '#F5F5F5'
+    }
   };
 });
 

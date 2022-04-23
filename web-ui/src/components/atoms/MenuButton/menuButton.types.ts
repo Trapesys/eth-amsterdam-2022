@@ -4,4 +4,6 @@ export interface IMenuButtonProps {
   text: string;
   onClick?: () => void;
   startIcon?: React.ReactNode;
+
+  isActive: boolean;
 }
