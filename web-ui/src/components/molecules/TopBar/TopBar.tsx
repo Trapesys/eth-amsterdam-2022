@@ -11,7 +11,7 @@ const TopBar: FC<ITopBarProps> = () => {
     <Box className={classes.topBarOuter}>
       <Container fixed={true} maxWidth={'lg'}>
         <Box className={classes.topBarInner}>
-          <Typography>
+          <Typography className={classes.logo}>
             <span className={classes.logoSpan}>stake</span> Overflow
           </Typography>
           <SearchBar />
@@ -39,6 +39,9 @@ const useStyles = makeStyles((theme) => {
     logoSpan: {
       fontWeight: 600,
       fontFamily: 'Poppins'
+    },
+    logo: {
+      fontSize: theme.typography.pxToRem(20)
     }
   };
 });
