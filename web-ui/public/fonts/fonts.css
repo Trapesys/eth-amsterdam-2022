@@ -1,0 +1,253 @@
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 100;
+    font-style: normal;
+    src: url('./Poppins-Thin.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 100;
+    font-style: italic;
+    src: url('./Poppins-ThinItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 200;
+    font-style: normal;
+    src: url('./Poppins-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 200;
+    font-style: italic;
+    src: url('./Poppins-ExtraLightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 300;
+    font-style: normal;
+    src: url('./Poppins-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 300;
+    font-style: italic;
+    src: url('./Poppins-LightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 400;
+    font-style: normal;
+    src: url('./Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 400;
+    font-style: italic;
+    src: url('./Poppins-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 500;
+    font-style: normal;
+    src: url('./Poppins-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 500;
+    font-style: italic;
+    src: url('./Poppins-MediumItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 600;
+    font-style: normal;
+    src: url('./Poppins-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 600;
+    font-style: italic;
+    src: url('./Poppins-SemiBoldItalic.ttf');
+}
+
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 700;
+    font-style: normal;
+    src: url('./Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 700;
+    font-style: italic;
+    src: url('./Poppins-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 800;
+    font-style: normal;
+    src: url('./Poppins-ExtraBold.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 800;
+    font-style: italic;
+    src: url('./Poppins-ExtraBoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 900;
+    font-style: normal;
+    src: url('./Poppins-Black.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-weight: 900;
+    font-style: italic;
+    src: url('./Poppins-BlackItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 100;
+    font-style: normal;
+    src: url('./Raleway-Thin.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 100;
+    font-style: italic;
+    src: url('./Raleway-ThinItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 200;
+    font-style: normal;
+    src: url('./Raleway-ExtraLight.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 200;
+    font-style: italic;
+    src: url('./Raleway-ExtraLightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 300;
+    font-style: normal;
+    src: url('./Raleway-Light.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 300;
+    font-style: italic;
+    src: url('./Raleway-LightItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 400;
+    font-style: normal;
+    src: url('./Raleway-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 400;
+    font-style: italic;
+    src: url('./Raleway-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 500;
+    font-style: normal;
+    src: url('./Raleway-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 500;
+    font-style: italic;
+    src: url('./Raleway-MediumItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 600;
+    font-style: normal;
+    src: url('./Raleway-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 600;
+    font-style: italic;
+    src: url('./Raleway-SemiBoldItalic.ttf');
+}
+
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 700;
+    font-style: normal;
+    src: url('./Raleway-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 700;
+    font-style: italic;
+    src: url('./Raleway-BoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 800;
+    font-style: normal;
+    src: url('./Raleway-ExtraBold.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 800;
+    font-style: italic;
+    src: url('./Raleway-ExtraBoldItalic.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 900;
+    font-style: normal;
+    src: url('./Raleway-Black.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-weight: 900;
+    font-style: italic;
+    src: url('./Raleway-BlackItalic.ttf');
+}
