@@ -1,10 +1,9 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import { FC } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import SectionTitle from '../../atoms/SectionTitle/SectionTitle';
 import Menu from '../../molecules/Menu/Menu';
-import AllQuestions from '../AllQuestions/AllQuestions';
 import { ReactComponent as Resolved } from './../../../shared/assets/icons/verified_black_24dp.svg';
 import { IHomepageProps } from './homepage.types';
 
@@ -43,10 +42,7 @@ const Homepage: FC<IHomepageProps> = () => {
         <Menu />
       </Box>
       <Box mx={4}>
-        <SectionTitle title={'All Questions'} large />
-        <Box mt={4}>
-          <AllQuestions />
-        </Box>
+        <Outlet />
       </Box>
       <Box>
         <SectionTitle title={'Get Started'} />
