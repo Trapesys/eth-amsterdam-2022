@@ -1,7 +1,5 @@
 import {
-  Badge,
   Box,
-  Chip,
   IconButton,
   makeStyles,
   Menu,
@@ -15,12 +13,12 @@ import clsx from 'clsx';
 import moment from 'moment';
 import React, { FC, useState } from 'react';
 import theme from '../../../theme/theme';
-import { ReactComponent as Resolved } from './../../../shared/assets/icons/verified_black_24dp.svg';
-import { IQuestionProps } from './question.types';
+import { IAnswerDetails, IAnswerProps } from './answer.types';
 
-const Question: FC<IQuestionProps> = (props) => {
+const Answer: FC<IAnswerProps> = (props) => {
+  const { contentID } = props;
+
   const classes = useStyles();
-  const { details } = props;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -32,44 +30,22 @@ const Question: FC<IQuestionProps> = (props) => {
     setAnchorEl(null);
   };
 
-  const renderTitle = () => {
-    if (details.isResolved) {
-      return (
-        <Badge badgeContent={<Resolved className={classes.resolvedIcon} />}>
-          <Typography className={classes.questionTitle}>
-            {details.title}
-          </Typography>
-        </Badge>
-      );
-    }
-
-    return (
-      <Typography className={classes.questionTitle}>{details.title}</Typography>
-    );
+  const answer: IAnswerDetails = {
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque leo urna, molestie ut ex id, rhoncus egestas diam. Ut mauris eros, sodales ac tortor quis, malesuada vestibulum elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc maximus quam imperdiet est commodo, eget tincidunt lectus bibendum...',
+    author: 'vitalik.eth',
+    isMarkedBest: true,
+    score: 10,
+    createdAt: moment().unix()
   };
 
   return (
     <Box
-      className={clsx(classes.questionWrapper, {
-        [classes.questionResolved]: details.isResolved
+      className={clsx(classes.answerWrapper, {
+        [classes.answerResolved]: answer.isMarkedBest
       })}
     >
-      <Box display={'flex'} alignItems={'center'}>
-        {renderTitle()}
-        <Box display={'flex'} flexWrap={'wrap'} mr={'-5px'} ml={'auto'}>
-          {details.tags.map((tag, index) => {
-            return (
-              <Box mr={'5px'}>
-                <Chip
-                  key={`chip-${details.title}-question-tag-${index}`}
-                  label={tag}
-                  variant={'outlined'}
-                />
-              </Box>
-            );
-          })}
-        </Box>
-        <Box>
+      <Box width={'100%'} display={'flex'}>
+        <Box ml={'auto'}>
           <IconButton onClick={handleClick}>
             <ExpandMoreRoundedIcon />
           </IconButton>
@@ -79,12 +55,12 @@ const Question: FC<IQuestionProps> = (props) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>Add to bounty</MenuItem>
+            <MenuItem onClick={handleClose}>Mark as helpful</MenuItem>
           </Menu>
         </Box>
       </Box>
-      <Box my={2}>
-        <Typography>{details.description}</Typography>
+      <Box mb={2}>
+        <Typography>{answer.text}</Typography>
       </Box>
       <Box display={'flex'} alignItems={'center'}>
         <Box display={'flex'} alignItems={'center'}>
@@ -96,8 +72,8 @@ const Question: FC<IQuestionProps> = (props) => {
             />
           </IconButton>
           <Box mx={1}>
-            <Typography className={classes.questionSpecific}>
-              {details.score}
+            <Typography className={classes.answerSpecific}>
+              {answer.score}
             </Typography>
           </Box>
           <IconButton>
@@ -110,19 +86,14 @@ const Question: FC<IQuestionProps> = (props) => {
         </Box>
 
         <Box display={'flex'} alignItems={'center'} ml={'auto'}>
-          <Box mr={'5px'} display={'flex'}>
-            <Typography className={classes.questionSpecific}>
-              {`${details.amount} ETH ·`}
-            </Typography>
-          </Box>
           <Box mr={'5px'} maxWidth={'150px'} className={'truncate'}>
-            <Typography className={clsx(classes.questionSpecific, 'truncate')}>
-              {`${details.posterAddress} ·`}
+            <Typography className={clsx(classes.answerSpecific, 'truncate')}>
+              {`${answer.author} ·`}
             </Typography>
           </Box>
           <Box>
-            <Typography className={classes.questionSpecific}>
-              {moment.unix(details.postingDate).format('DD.MM.YYYY.')}
+            <Typography className={classes.answerSpecific}>
+              {moment.unix(answer.createdAt).format('DD.MM.YYYY.')}
             </Typography>
           </Box>
         </Box>
@@ -133,7 +104,7 @@ const Question: FC<IQuestionProps> = (props) => {
 
 const useStyles = makeStyles((theme) => {
   return {
-    questionWrapper: {
+    answerWrapper: {
       display: 'flex',
       flexDirection: 'column',
       borderRadius: '15px',
@@ -142,21 +113,10 @@ const useStyles = makeStyles((theme) => {
       backgroundColor: theme.palette.custom.darkWhite,
       boxShadow: theme.palette.boxShadows.darker
     },
-    questionResolved: {
+    answerResolved: {
       outline: `1px solid ${theme.palette.custom.trapesysGreen}`
     },
-    resolvedIcon: {
-      fill: theme.palette.custom.trapesysGreen,
-      width: '16px',
-      height: 'auto',
-      marginLeft: '10px'
-    },
-    questionTitle: {
-      fontFamily: 'Raleway',
-      fontWeight: 700,
-      fontSize: theme.typography.pxToRem(20)
-    },
-    questionSpecific: {
+    answerSpecific: {
       fontFamily: 'Poppins !important',
       fontSize: theme.typography.pxToRem(16),
       color: theme.palette.custom.darkGray
@@ -164,4 +124,4 @@ const useStyles = makeStyles((theme) => {
   };
 });
 
-export default Question;
+export default Answer;

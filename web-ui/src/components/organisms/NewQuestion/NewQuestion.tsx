@@ -175,7 +175,7 @@ const NewQuestion: FC<INewQuestionProps> = () => {
               />
             </Box>
 
-            <Box ml={'auto'} width={'100%'} mt={4}>
+            <Box display={'flex'} width={'100%'} mt={4}>
               <Button
                 variant={'contained'}
                 color={'secondary'}
@@ -205,7 +205,8 @@ const useStyles = makeStyles((theme) => {
     submitButton: {
       fontWeight: 700,
       fontSize: theme.typography.pxToRem(16),
-      borderRadius: '15px'
+      borderRadius: '15px',
+      marginLeft: 'auto !important'
     }
   };
 });
