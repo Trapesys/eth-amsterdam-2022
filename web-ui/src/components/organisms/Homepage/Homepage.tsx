@@ -7,9 +7,39 @@ import Menu from '../../molecules/Menu/Menu';
 import AllQuestions from '../AllQuestions/AllQuestions';
 import { ReactComponent as Resolved } from './../../../shared/assets/icons/verified_black_24dp.svg';
 import { IHomepageProps } from './homepage.types';
+import { create, CID, IPFSHTTPClient } from 'ipfs-http-client';
+
+const API_URL = 'https://ipfs.infura.io:5001/api/v0';
+const URL = `https://ipfs.io/ipfs/Qmd5Vv6Egjc11LB27qF9dMDg4wCwzZA5GM4oNN1gyqLq1J`;
 
 const Homepage: FC<IHomepageProps> = () => {
   const classes = useStyles();
+
+  // useEffect(() => {
+  //   let ipfs: IPFSHTTPClient | undefined;
+  //   try {
+  //     ipfs = create({
+  //       url: API_URL
+  //     });
+
+  //     (async () => {
+  //       const result = await ipfs!.add(
+  //         JSON.stringify({
+  //           title: 'Hello',
+  //           content: 'World'
+  //         })
+  //       );
+  //       console.log('result', result);
+
+  //       const x = CID(result.cid.toString());
+  //     })();
+  //   } catch (error) {
+  //     console.error('IPFS error ', error);
+  //     ipfs = undefined;
+  //   }
+
+  //   console.log('ipfs', ipfs);
+  // }, []);
 
   const contributors: {
     address: string;
@@ -105,7 +135,8 @@ const useStyles = makeStyles((theme) => {
       fontFamily: 'Poppins',
       borderRadius: '15px',
       padding: '15px 30px',
-      boxShadow: 'none'
+      boxShadow: 'none',
+      cursor: 'pointer'
     },
     resolvedIcon: {
       width: '40px',
