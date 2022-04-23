@@ -17,6 +17,7 @@
     "@types/node": "^16.7.13",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
+    "@walletconnect/web3-provider": "^1.7.7",
     "chart.js": "^3.7.1",
     "clsx": "^1.1.1",
     "history": "^5.2.0",
@@ -28,7 +29,7 @@
     "react-scripts": "4.x",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0",
-    "web3": "^1.7.0"
+    "web3": "^1.7.3"
   },
   "scripts": {
     "start": "react-scripts start",
