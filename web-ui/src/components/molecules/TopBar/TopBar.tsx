@@ -1,4 +1,4 @@
-import { Box, Container, makeStyles } from '@material-ui/core';
+import { Box, Container, makeStyles, Typography } from '@material-ui/core';
 import { FC } from 'react';
 import SearchBar from '../SearchBar/SearchBar';
 import UserMenu from '../UserMenu/UserMenu';
@@ -9,9 +9,11 @@ const TopBar: FC<ITopBarProps> = () => {
 
   return (
     <Box className={classes.topBarOuter}>
-      <Container fixed={true} maxWidth={'md'}>
+      <Container fixed={true} maxWidth={'lg'}>
         <Box className={classes.topBarInner}>
-          <Box>Logo</Box>
+          <Typography>
+            <span className={classes.logoSpan}>stake</span> Overflow
+          </Typography>
           <SearchBar />
           <UserMenu />
         </Box>
@@ -33,6 +35,10 @@ const useStyles = makeStyles((theme) => {
       borderBottom: '1px solid rgba(0, 0, 0, 0.15)',
       display: 'flex',
       width: '100%'
+    },
+    logoSpan: {
+      fontWeight: 600,
+      fontFamily: 'Poppins'
     }
   };
 });

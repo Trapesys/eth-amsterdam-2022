@@ -1,5 +1,5 @@
 export interface IQuestionProps {
-  contentID: string;
+  details: IQuestionDetails;
 }
 
 export interface IQuestionDetails {
@@ -10,4 +10,5 @@ export interface IQuestionDetails {
   postingDate: number;
   amount: number;
   score: number;
+  isResolved: boolean;
 }
