@@ -28,7 +28,7 @@
     "react-scripts": "4.x",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0",
-    "web3": "^1.7.3"
+    "web3": "^1.7.3",
     "yup": "^0.32.11"
   },
   "scripts": {
