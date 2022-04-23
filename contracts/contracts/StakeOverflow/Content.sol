@@ -39,7 +39,7 @@ contract Content is ERC721URIStorage, Ownable {
         _mint(recipient, newContentID);
         _setTokenURI(
             newContentID,
-            string(abi.encodePacked("ipfs://", ipfsContentHash))
+            string(abi.encodePacked("https://ipfs.io/ipfs/", ipfsContentHash))
         );
 
         return newContentID;
