@@ -5,7 +5,11 @@ type Question @entity {
   title: String! @search(by: [term])
   tags: [String!]!
   createdTxHash: String!
+  createdBlockHash: String!
+  createdBlockTimestamp: Int!
   closedTxHash: String
+  closedBlockHash: String
+  closedBlockTimestamp: Int
 
   status: String!
   numAnswers: String!
@@ -22,6 +26,16 @@ type Answer @entity {
   answerer: String!
   uri: String!
   createdTxHash: String!
+  createdBlockHash: String!
+  createdBlockTimestamp: Int
 
   receivedReward: String!
+  rewardedBy: [String!]!
+}
+
+type Contributor @entity {
+  id: ID!
+  numAnswered: String!
+  numRewarded: String!
+  totalReward: String!
 }
