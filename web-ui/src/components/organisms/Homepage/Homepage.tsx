@@ -1,11 +1,11 @@
-import { Box, Button, makeStyles, Typography } from '@material-ui/core';
+import {Box, Button, makeStyles, Typography} from '@material-ui/core';
 import clsx from 'clsx';
-import { FC } from 'react';
+import {FC} from 'react';
 import SectionTitle from '../../atoms/SectionTitle/SectionTitle';
 import Menu from '../../molecules/Menu/Menu';
 import AllQuestions from '../AllQuestions/AllQuestions';
-import { ReactComponent as Resolved } from './../../../shared/assets/icons/verified_black_24dp.svg';
-import { IHomepageProps } from './homepage.types';
+import {ReactComponent as Resolved} from './../../../shared/assets/icons/verified_black_24dp.svg';
+import {IHomepageProps} from './homepage.types';
 
 const Homepage: FC<IHomepageProps> = () => {
   const classes = useStyles();
@@ -39,16 +39,16 @@ const Homepage: FC<IHomepageProps> = () => {
   return (
     <Box display={'flex'} justifyContent={'space-between'} mt={6}>
       <Box>
-        <Menu />
+        <Menu/>
       </Box>
       <Box mx={4}>
-        <SectionTitle title={'All Questions'} large />
+        <SectionTitle title={'All Questions'} large/>
         <Box mt={4}>
-          <AllQuestions />
+          <AllQuestions/>
         </Box>
       </Box>
       <Box>
-        <SectionTitle title={'Get Started'} />
+        <SectionTitle title={'Get Started'}/>
         <Box mt={4}>
           <Button
             variant={'contained'}
@@ -60,7 +60,7 @@ const Homepage: FC<IHomepageProps> = () => {
         </Box>
         <Box display={'flex'} flexDirection={'column'} mb={-2} mt={6}>
           <Box mb={2}>
-            <SectionTitle title={'Top Contributors'} />
+            <SectionTitle title={'Top Contributors'}/>
           </Box>
           {contributors.map((contributor, index) => {
             return (
@@ -84,7 +84,7 @@ const Homepage: FC<IHomepageProps> = () => {
                     {contributor.answered}
                   </Typography>
                 </Box>
-                <Resolved className={classes.resolvedIcon} />
+                <Resolved className={classes.resolvedIcon}/>
               </Box>
             );
           })}
@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) => {
       height: 'auto'
     },
     contributor: {
-      fontWeight: 600,
+      fontWeight: 500,
       fontFamily: 'Poppins !important'
     }
   };
