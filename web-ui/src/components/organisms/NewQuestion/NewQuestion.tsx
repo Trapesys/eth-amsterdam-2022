@@ -14,32 +14,100 @@ import {
 import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
 import SendRoundedIcon from '@material-ui/icons/SendRounded';
 import { useFormik } from 'formik';
+import { AbiItem } from 'web3-utils';
 import React, { FC, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Web3Context from '../../../context/Web3Context';
 import SectionTitle from '../../atoms/SectionTitle/SectionTitle';
 import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { INewQuestionProps } from './newQuestion.types';
+import StakingABI from './../../../contract/Stake.json'
+import { create, CID, IPFSHTTPClient } from 'ipfs-http-client';
+
+const IPFS_API_URL = 'https://ipfs.infura.io:5001/api/v0';
+
+const URL = `https://ipfs.io/ipfs/Qmd5Vv6Egjc11LB27qF9dMDg4wCwzZA5GM4oNN1gyqLq1J`;
+
 
 const NewQuestion: FC<INewQuestionProps> = () => {
   const classes = useStyles();
 
-  const { web3Account } = useContext(Web3Context);
+  const names: string[] = ['Go', 'Polygon', 'The Graph'];
+
+  const { web3Account,web3Context } = useContext(Web3Context);
 
   const { openSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
 
+  const address = "0x9428cDde24fdA107944889FE1c298f60DC062975"
+
   const formik = useFormik({
     initialValues: {
       title: '',
       amount: '',
-      question: ''
+      question: '',
+      tags: [],
     },
     enableReinitialize: true,
-    onSubmit: (values, { resetForm }) => {
-      // TODO submit form
+    onSubmit: async(values, { resetForm }) => {
+      if (web3Account == null || web3Context == null) {
+        openSnackbar('Wallet not connected', 'error')
+
+        navigate('/')
+
+        return
+      }
+
+
+      console.log('web3Account', web3Account);
+      console.log('values', values);
+
+      const ipfs = create({
+        url: IPFS_API_URL
+      });
+
+      const amountInEth = Number.parseInt(values.amount) * 10**18
+
+      const result = await ipfs!.add(
+          JSON.stringify({
+            title: values.title,
+            amount: amountInEth,
+            body: values.question,
+            tags: values.tags,
+          })
+        );
+
+      console.log('upload to IPFS', {
+        title: values.title,
+        amount: amountInEth,
+        body: values.question,
+        tags: values.tags,
+      })
+
+
+
+      let contract = new web3Context.eth.Contract(
+        StakingABI as AbiItem[],
+        address,
+        {
+          from: web3Account as string
+        }
+      );
+
+      console.log('createQuestion', result.cid.toString(), values.title, values.tags)
+
+      const tx = await contract.methods.createQuestion(result.cid.toString(), values.title, values.tags).send({
+        gas: 0,
+        value: amountInEth
+      });
+
+      console.log('tx', tx)
+
       resetForm();
+
+      openSnackbar('Posted new question!', 'success')
+
 
       navigate('/');
     }
@@ -54,12 +122,9 @@ const NewQuestion: FC<INewQuestionProps> = () => {
   //   }
   // }, []);
 
-  const names: string[] = ['Go', 'Polygon', 'The Graph'];
-
-  const [tags, setTags] = useState<string[]>([]);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setTags(event.target.value as string[]);
+    formik.setFieldValue('tags', event.target.value as string[])
   };
 
   return (
@@ -98,6 +163,7 @@ const NewQuestion: FC<INewQuestionProps> = () => {
                 <TextField
                   id={'amount'}
                   label={'Amount'}
+                  type="number"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">EDGE</InputAdornment>
@@ -127,7 +193,7 @@ const NewQuestion: FC<INewQuestionProps> = () => {
                   id={'tags'}
                   multiple
                   variant={'outlined'}
-                  value={tags}
+                  value={formik.values.tags}
                   onChange={handleChange}
                   input={
                     <Input

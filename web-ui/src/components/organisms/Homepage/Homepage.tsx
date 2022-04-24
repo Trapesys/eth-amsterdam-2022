@@ -1,4 +1,5 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core';
+import { NoEncryptionTwoTone } from '@material-ui/icons';
 import clsx from 'clsx';
 import { FC } from 'react';
 import { Link, Outlet } from 'react-router-dom';
@@ -77,7 +78,7 @@ const Homepage: FC<IHomepageProps> = () => {
       <Box>
         <SectionTitle title={'Get Started'} />
         <Box mt={4}>
-          <Link to={'/new'}>
+          <Link to={'/new'} style={{textDecoration:"none"}}>
             <Button
               variant={'contained'}
               color={'secondary'}
