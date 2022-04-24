@@ -7,6 +7,8 @@ import Web3 from 'web3';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { useState, useEffect } from 'react';
 import useSnackbar from '../Snackbar/useSnackbar.hook';
+var Contract = require('web3-eth-contract');
+
 
 const UserMenu: FC<IUserMenuProps> = () => {
   const [walletName, setWalletName] = useState<string>('Connect Wallet');
@@ -39,10 +41,13 @@ const UserMenu: FC<IUserMenuProps> = () => {
         ]
       }
     });
+    
     const web3 = new Web3(Provider as any);
     await Provider.enable().catch((err) => {
       console.log(err);
     });
+
+    Contract.setProvider(Provider);
 
     const accounts = await web3.eth.getAccounts();
     openSnackbar("Wallet connected", "success");

@@ -5,7 +5,9 @@ import {
   InputBase,
   Paper,
   Popper,
-  Typography
+  Button,
+  Typography,
+  Divider
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
@@ -40,9 +42,69 @@ const Searchbar: FC<ISearchBarProps> = () => {
 
   const { openSnackbar } = useSnackbar();
 
+  const fetchSearchResults=()=>{
+    const employeeList = [
+      "How do I hash a clear text password received from the Front End in the Backend using Bcrypt?", 
+      "In Flutter, is it possible to combine 2 colored filters in CustomPaint for cavas draw?", 
+      "Jupyter Voila Error 404: Not Found - you are requesting a page that does not exist"
+    ];
+
+    return employeeList;
+  }
+
+  const renderIdentitiesSection = (identities: any) => {
+    if (identities && identities.length > 0) {
+      return (
+        <Box display={'flex'} flexDirection={'column'}>
+        <Box>
+          <Typography>
+            Search results
+            </Typography>
+        </Box>
+        <Box display={'flex'} flexDirection={'column'} width={'100%'}>
+          {identities.map((result:any) => {
+            return (
+              <>
+              <Button
+                key={result}
+                classes={{
+                  root: classes.buttonOverride
+                }}
+              >
+                <Box
+                  display={'flex'}
+                  padding={'10px 15px'}
+                  style={{textAlign:"left"}}
+                >
+                  <Box>{result}</Box>
+                </Box>
+              </Button>
+              <Divider />
+              </>
+            );
+          })}
+        </Box>
+      </Box>
+      );
+    }
+  };
+
   const handleSearch = () => {
     if (searchValue) {
-      // TODO search
+      setOpen(true);
+
+      const value = fetchSearchResults()
+      
+      let items = [];
+      
+      let identities = renderIdentitiesSection(value);
+      if (identities) {
+        items.push(identities);
+      }
+      
+      setSearchItems(items);
+      
+
     } else {
       setOpen(false);
     }
@@ -87,16 +149,18 @@ const Searchbar: FC<ISearchBarProps> = () => {
         role={undefined}
         transition
         placement={'bottom-start'}
+        style={{zIndex:"9999"}}
       >
         {({ TransitionProps, placement }) => (
           <Grow {...TransitionProps}>
             <ClickAwayListener onClickAway={handleClose}>
               <Box
-                width={'400px'}
+                width={'600px'}
                 style={{
-                  backgroundColor: theme.palette.custom.darkGray,
+                  backgroundColor: "#fdfdfd",
                   padding: '10px 15px',
-                  borderRadius: '15px'
+                  borderRadius: '15px',
+                  boxShadow: "0 8px 16px 0 rgb(0 0 0 / 20%)",
                 }}
               >
                 {renderSearchItems()}
