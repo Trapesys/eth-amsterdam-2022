@@ -65,22 +65,24 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      return await graphQLClient
-        .query(constructQuery(contentID as string))
-        .toPromise();
-    };
+    if (contentID) {
+      const fetchData = async () => {
+        return await graphQLClient
+          .query(constructQuery(contentID as string))
+          .toPromise();
+      };
 
-    fetchData()
-      .then((data) => {
-        const castData: IQuestionFetchResult = data.data;
+      fetchData()
+        .then((data) => {
+          const castData: IQuestionFetchResult = data.data;
 
-        setFetchedQuestionData(castData);
-        setLoading(false);
-      })
-      .catch((err) => {
-        openSnackbar('Unable to fetch question data', 'error');
-      });
+          setFetchedQuestionData(castData);
+          setLoading(false);
+        })
+        .catch((err) => {
+          openSnackbar('Unable to fetch question data', 'error');
+        });
+    }
   }, [contentID]);
 
   if (loading) {
@@ -121,7 +123,7 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
         {
           // TODO change
         }
-        <AnswerField contentID={fetchedQuestionData.questions[0].title} />
+        <AnswerField contentID={fetchedQuestionData.questions[0].id} />
       </Box>
 
       <Box mb={4}>

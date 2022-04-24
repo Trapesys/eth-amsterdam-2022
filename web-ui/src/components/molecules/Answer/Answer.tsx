@@ -11,8 +11,9 @@ import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import clsx from 'clsx';
 import moment from 'moment';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import theme from '../../../theme/theme';
+import useSnackbar from '../Snackbar/useSnackbar.hook';
 import { IAnswerProps } from './answer.types';
 
 const Answer: FC<IAnswerProps> = (props) => {
@@ -29,6 +30,25 @@ const Answer: FC<IAnswerProps> = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  interface IPFSAnswerData {
+    body: string;
+  }
+
+  const { openSnackbar } = useSnackbar();
+
+  const [description, setDescription] = useState<string>('');
+
+  useEffect(() => {
+    fetch(details.uri)
+      .then((result) => result.json())
+      .then((data) => {
+        setDescription((data as IPFSAnswerData).body);
+      })
+      .catch((err) => {
+        openSnackbar('Unable to fetch question body', 'error');
+      });
+  }, [details]);
 
   return (
     <Box
@@ -52,10 +72,7 @@ const Answer: FC<IAnswerProps> = (props) => {
         </Box>
       </Box>
       <Box mb={2}>
-        {
-          // TODO change
-        }
-        <Typography>{'TEXT'}</Typography>
+        <Typography>{description}</Typography>
       </Box>
       <Box display={'flex'} alignItems={'center'}>
         <Box display={'flex'} alignItems={'center'}>

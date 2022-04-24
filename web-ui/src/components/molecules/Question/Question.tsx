@@ -13,14 +13,15 @@ import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import clsx from 'clsx';
 import moment from 'moment';
-import React, {FC, useState} from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import theme from '../../../theme/theme';
-import {ReactComponent as Resolved} from './../../../shared/assets/icons/verified_black_24dp.svg';
-import {IQuestionProps} from './question.types';
+import useSnackbar from '../Snackbar/useSnackbar.hook';
+import { ReactComponent as Resolved } from './../../../shared/assets/icons/verified_black_24dp.svg';
+import { IQuestionProps } from './question.types';
 
 const Question: FC<IQuestionProps> = (props) => {
   const classes = useStyles();
-  const {details} = props;
+  const { details } = props;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -32,10 +33,32 @@ const Question: FC<IQuestionProps> = (props) => {
     setAnchorEl(null);
   };
 
+  interface IPFSQuestionData {
+    title: string;
+    amount: number;
+    body: string;
+    tags: string[];
+  }
+
+  const [description, setDescription] = useState<string>('');
+
+  const { openSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    fetch(details.uri)
+      .then((result) => result.json())
+      .then((data) => {
+        setDescription((data as IPFSQuestionData).body);
+      })
+      .catch((err) => {
+        openSnackbar('Unable to fetch question body', 'error');
+      });
+  }, [details]);
+
   const renderTitle = () => {
     if (details.totalReward !== '0') {
       return (
-        <Badge badgeContent={<Resolved className={classes.resolvedIcon}/>}>
+        <Badge badgeContent={<Resolved className={classes.resolvedIcon} />}>
           <Typography className={classes.questionTitle}>
             {details.title}
           </Typography>
@@ -71,7 +94,7 @@ const Question: FC<IQuestionProps> = (props) => {
         </Box>
         <Box>
           <IconButton onClick={handleClick}>
-            <ExpandMoreRoundedIcon/>
+            <ExpandMoreRoundedIcon />
           </IconButton>
           <Menu
             anchorEl={anchorEl}
@@ -84,10 +107,7 @@ const Question: FC<IQuestionProps> = (props) => {
         </Box>
       </Box>
       <Box my={2}>
-        {
-          // TODO change
-        }
-        <Typography>{'DESCRIPTION'}</Typography>
+        <Typography>{description}</Typography>
       </Box>
       <Box display={'flex'} alignItems={'center'}>
         <Box display={'flex'} alignItems={'center'}>

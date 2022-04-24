@@ -4,7 +4,7 @@ import { createClient } from 'urql';
 import Config from '../../../config';
 import LoadingIndicator from '../../atoms/LoadingIndicator/LoadingIndicator';
 import Question from '../../molecules/Question/Question';
-import { IQuestionDetails } from '../../molecules/Question/question.types';
+import { IQuestionFetchResult } from '../../molecules/Question/question.types';
 import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { IAllQuestionsProps } from './allQuestions.types';
 
@@ -32,11 +32,10 @@ const AllQuestions: FC<IAllQuestionsProps> = () => {
     url: Config.GRAPH_URL
   });
 
-  const [fetchedQuestions, setFetchedQuestions] = useState<{
-    questions: IQuestionDetails[];
-  }>({
-    questions: []
-  });
+  const [fetchedQuestions, setFetchedQuestions] =
+    useState<IQuestionFetchResult>({
+      questions: []
+    });
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -50,6 +49,9 @@ const AllQuestions: FC<IAllQuestionsProps> = () => {
     fetchQuestions()
       .then((data) => {
         console.log(data);
+        const questionData: IQuestionFetchResult = data.data;
+
+        setFetchedQuestions(questionData);
       })
       .catch((err) => {
         console.log(err);

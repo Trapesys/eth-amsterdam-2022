@@ -25,8 +25,6 @@ import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import StakingABI from './../../../contract/Stake.json';
 import { INewQuestionProps } from './newQuestion.types';
 
-//const URL = `https://ipfs.io/ipfs/Qmd5Vv6Egjc11LB27qF9dMDg4wCwzZA5GM4oNN1gyqLq1J`;
-
 const NewQuestion: FC<INewQuestionProps> = () => {
   const classes = useStyles();
 
