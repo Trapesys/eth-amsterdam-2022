@@ -3,12 +3,26 @@ export interface IQuestionProps {
 }
 
 export interface IQuestionDetails {
+  id: string;
+  questioner: string;
+  uri: string;
   title: string;
-  description: string;
   tags: string[];
-  posterAddress: string;
-  postingDate: number;
-  amount: number;
-  score: number;
-  isResolved: boolean;
+  createdBlockTimestamp: number;
+  status: string;
+  currentStaked: string;
+  totalReward: string;
+  answers: IAnswerDetailed[];
+}
+
+export interface IQuestionFetchResult {
+  questions: IQuestionDetails[];
+}
+
+export interface IAnswerDetailed {
+  id: string;
+  answerer: string;
+  uri: string;
+  createdBlockTimestamp: number;
+  receivedReward: string;
 }

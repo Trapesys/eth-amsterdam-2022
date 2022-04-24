@@ -1,17 +1,19 @@
 import {
   Box,
+  Button,
   ClickAwayListener,
+  Divider,
   Grow,
   InputBase,
   Paper,
   Popper,
-  Button,
-  Typography,
-  Divider
+  Typography
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import React, { FC, useRef, useState } from 'react';
+import { createClient } from 'urql';
+import Config from '../../../config';
 import theme from '../../../theme/theme';
 import LoadingIndicator from '../../atoms/LoadingIndicator/LoadingIndicator';
 import useSnackbar from '../Snackbar/useSnackbar.hook';
@@ -23,7 +25,6 @@ const Searchbar: FC<ISearchBarProps> = () => {
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState<boolean>(false);
-  const id = open ? 'search-popover' : undefined;
 
   const handleClose = (event: any) => {
     if (
@@ -42,49 +43,59 @@ const Searchbar: FC<ISearchBarProps> = () => {
 
   const { openSnackbar } = useSnackbar();
 
-  const fetchSearchResults=()=>{
-    const employeeList = [
-      "How do I hash a clear text password received from the Front End in the Backend using Bcrypt?", 
-      "In Flutter, is it possible to combine 2 colored filters in CustomPaint for cavas draw?", 
-      "Jupyter Voila Error 404: Not Found - you are requesting a page that does not exist"
-    ];
+  const constructSearchQuery = (searchTerm: string) => {
+    return `
+        {
+      questions(where: {title_contains: "${searchTerm}"}) {
+        id
+        uri
+        title
+      }
+    }
+    `;
+  };
 
-    return employeeList;
-  }
+  const graphQLClient = createClient({
+    url: Config.GRAPH_URL
+  });
+
+  const fetchSearchResults = async () => {
+    const query = constructSearchQuery(searchValue);
+
+    return await graphQLClient.query(query).toPromise();
+  };
 
   const renderIdentitiesSection = (identities: any) => {
     if (identities && identities.length > 0) {
       return (
         <Box display={'flex'} flexDirection={'column'}>
-        <Box>
-          <Typography>
-            Search results
-            </Typography>
+          <Box>
+            <Typography>Search results</Typography>
+          </Box>
+          <Box display={'flex'} flexDirection={'column'} width={'100%'}>
+            {identities.map((result: any) => {
+              return (
+                <>
+                  <Button
+                    key={result}
+                    classes={{
+                      root: classes.buttonOverride
+                    }}
+                  >
+                    <Box
+                      display={'flex'}
+                      padding={'10px 15px'}
+                      style={{ textAlign: 'left' }}
+                    >
+                      <Box>{result}</Box>
+                    </Box>
+                  </Button>
+                  <Divider />
+                </>
+              );
+            })}
+          </Box>
         </Box>
-        <Box display={'flex'} flexDirection={'column'} width={'100%'}>
-          {identities.map((result:any) => {
-            return (
-              <>
-              <Button
-                key={result}
-                classes={{
-                  root: classes.buttonOverride
-                }}
-              >
-                <Box
-                  display={'flex'}
-                  padding={'10px 15px'}
-                  style={{textAlign:"left"}}
-                >
-                  <Box>{result}</Box>
-                </Box>
-              </Button>
-              <Divider />
-              </>
-            );
-          })}
-        </Box>
-      </Box>
       );
     }
   };
@@ -93,18 +104,20 @@ const Searchbar: FC<ISearchBarProps> = () => {
     if (searchValue) {
       setOpen(true);
 
-      const value = fetchSearchResults()
-      
-      let items = [];
-      
-      let identities = renderIdentitiesSection(value);
-      if (identities) {
-        items.push(identities);
-      }
-      
-      setSearchItems(items);
-      
+      fetchSearchResults()
+        .then((data) => {
+          let items = [];
 
+          let identities = renderIdentitiesSection(data);
+          if (identities) {
+            items.push(identities);
+          }
+
+          setSearchItems(items);
+        })
+        .catch((err) => {
+          openSnackbar('Unable to fetch search results', 'error');
+        });
     } else {
       setOpen(false);
     }
@@ -149,7 +162,7 @@ const Searchbar: FC<ISearchBarProps> = () => {
         role={undefined}
         transition
         placement={'bottom-start'}
-        style={{zIndex:"9999"}}
+        style={{ zIndex: '9999' }}
       >
         {({ TransitionProps, placement }) => (
           <Grow {...TransitionProps}>
@@ -157,10 +170,10 @@ const Searchbar: FC<ISearchBarProps> = () => {
               <Box
                 width={'600px'}
                 style={{
-                  backgroundColor: "#fdfdfd",
+                  backgroundColor: '#fdfdfd',
                   padding: '10px 15px',
                   borderRadius: '15px',
-                  boxShadow: "0 8px 16px 0 rgb(0 0 0 / 20%)",
+                  boxShadow: '0 8px 16px 0 rgb(0 0 0 / 20%)'
                 }}
               >
                 {renderSearchItems()}

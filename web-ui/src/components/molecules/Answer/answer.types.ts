@@ -1,11 +1,5 @@
-export interface IAnswerProps {
-  contentID: string;
-}
+import { IAnswerDetailed } from '../Question/question.types';
 
-export interface IAnswerDetails {
-  text: string;
-  author: string;
-  isMarkedBest: boolean;
-  createdAt: number;
-  score?: number;
+export interface IAnswerProps {
+  details: IAnswerDetailed;
 }

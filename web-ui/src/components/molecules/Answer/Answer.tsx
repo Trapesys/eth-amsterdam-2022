@@ -11,12 +11,13 @@ import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import clsx from 'clsx';
 import moment from 'moment';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import theme from '../../../theme/theme';
-import { IAnswerDetails, IAnswerProps } from './answer.types';
+import useSnackbar from '../Snackbar/useSnackbar.hook';
+import { IAnswerProps } from './answer.types';
 
 const Answer: FC<IAnswerProps> = (props) => {
-  const { contentID } = props;
+  const { details } = props;
 
   const classes = useStyles();
 
@@ -30,18 +31,29 @@ const Answer: FC<IAnswerProps> = (props) => {
     setAnchorEl(null);
   };
 
-  const answer: IAnswerDetails = {
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque leo urna, molestie ut ex id, rhoncus egestas diam. Ut mauris eros, sodales ac tortor quis, malesuada vestibulum elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc maximus quam imperdiet est commodo, eget tincidunt lectus bibendum...',
-    author: 'vitalik.eth',
-    isMarkedBest: true,
-    score: 10,
-    createdAt: moment().unix()
-  };
+  interface IPFSAnswerData {
+    body: string;
+  }
+
+  const { openSnackbar } = useSnackbar();
+
+  const [description, setDescription] = useState<string>('');
+
+  useEffect(() => {
+    fetch(details.uri)
+      .then((result) => result.json())
+      .then((data) => {
+        setDescription((data as IPFSAnswerData).body);
+      })
+      .catch((err) => {
+        openSnackbar('Unable to fetch question body', 'error');
+      });
+  }, [details]);
 
   return (
     <Box
       className={clsx(classes.answerWrapper, {
-        [classes.answerResolved]: answer.isMarkedBest
+        [classes.answerResolved]: details.receivedReward !== '0'
       })}
     >
       <Box width={'100%'} display={'flex'}>
@@ -60,7 +72,7 @@ const Answer: FC<IAnswerProps> = (props) => {
         </Box>
       </Box>
       <Box mb={2}>
-        <Typography>{answer.text}</Typography>
+        <Typography>{description}</Typography>
       </Box>
       <Box display={'flex'} alignItems={'center'}>
         <Box display={'flex'} alignItems={'center'}>
@@ -72,9 +84,7 @@ const Answer: FC<IAnswerProps> = (props) => {
             />
           </IconButton>
           <Box mx={1}>
-            <Typography className={classes.answerSpecific}>
-              {answer.score}
-            </Typography>
+            <Typography className={classes.answerSpecific}>{0}</Typography>
           </Box>
           <IconButton>
             <ArrowDownwardRoundedIcon
@@ -88,12 +98,12 @@ const Answer: FC<IAnswerProps> = (props) => {
         <Box display={'flex'} alignItems={'center'} ml={'auto'}>
           <Box mr={'5px'} maxWidth={'150px'} className={'truncate'}>
             <Typography className={clsx(classes.answerSpecific, 'truncate')}>
-              {`${answer.author} ·`}
+              {`${details.answerer} ·`}
             </Typography>
           </Box>
           <Box>
             <Typography className={classes.answerSpecific}>
-              {moment.unix(answer.createdAt).format('DD.MM.YYYY.')}
+              {moment.unix(details.createdBlockTimestamp).format('DD.MM.YYYY.')}
             </Typography>
           </Box>
         </Box>

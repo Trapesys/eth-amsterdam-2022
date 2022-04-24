@@ -7,13 +7,17 @@ import {
 } from '@material-ui/core';
 import ArchiveRoundedIcon from '@material-ui/icons/ArchiveRounded';
 import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { createClient } from 'urql';
+import Config from '../../../config';
+import LoadingIndicator from '../../atoms/LoadingIndicator/LoadingIndicator';
 import SectionTitle from '../../atoms/SectionTitle/SectionTitle';
 import Answer from '../../molecules/Answer/Answer';
 import AnswerField from '../../molecules/AnswerField/AnswerField';
 import Question from '../../molecules/Question/Question';
-import { IQuestionDetails } from '../../molecules/Question/question.types';
+import { IQuestionFetchResult } from '../../molecules/Question/question.types';
+import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { IQuestionPageProps } from './questionPage.types';
 
 const QuestionPage: FC<IQuestionPageProps> = () => {
@@ -21,19 +25,69 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
 
   const navigate = useNavigate();
 
-  const question: IQuestionDetails = {
-    title: 'Lorem Ipsum?',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque leo urna, molestie ut ex id, rhoncus egestas diam. Ut mauris eros, sodales ac tortor quis, malesuada vestibulum elit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc maximus quam imperdiet est commodo, eget tincidunt lectus bibendum...',
-    tags: ['Go', 'Polygon'],
-    posterAddress: 'vitalik.eth',
-    postingDate: 1650728367,
-    amount: 100,
-    score: 10,
-    isResolved: true
+  const constructQuery = (id: string) => {
+    return `
+    {
+ questions(where: {id: "${id}"}){
+    id
+    questioner
+    uri
+    title
+    tags
+    createdBlockTimestamp
+    closedBlockTimestamp
+    status
+    currentStaked
+    totalReward
+    answers {
+      id
+      answerer
+      uri
+      createdBlockTimestamp
+      receivedReward
+    }
+  }
+}
+    `;
   };
 
-  const answerIDs: string[] = ['123', '123'];
+  const [fetchedQuestionData, setFetchedQuestionData] =
+    useState<IQuestionFetchResult>({
+      questions: []
+    });
+
+  const graphQLClient = createClient({
+    url: Config.GRAPH_URL
+  });
+
+  const { openSnackbar } = useSnackbar();
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (contentID) {
+      const fetchData = async () => {
+        return await graphQLClient
+          .query(constructQuery(contentID as string))
+          .toPromise();
+      };
+
+      fetchData()
+        .then((data) => {
+          const castData: IQuestionFetchResult = data.data;
+
+          setFetchedQuestionData(castData);
+          setLoading(false);
+        })
+        .catch((err) => {
+          openSnackbar('Unable to fetch question data', 'error');
+        });
+    }
+  }, [contentID]);
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <Box display={'flex'} flexDirection={'column'}>
@@ -58,7 +112,7 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
           </Button>
         </Box>
       </Box>
-      <Question details={question} />
+      <Question details={fetchedQuestionData.questions[0]} />
       <Box width={'100%'} my={6}>
         <Divider />
       </Box>
@@ -69,17 +123,17 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
         {
           // TODO change
         }
-        <AnswerField contentID={question.title} />
+        <AnswerField contentID={fetchedQuestionData.questions[0].id} />
       </Box>
 
       <Box mb={4}>
         <SectionTitle title={'Community Answers'} />
       </Box>
       <Box display={'flex'} flexDirection={'column'} width={'100%'} mb={-4}>
-        {answerIDs.map((answerID, index) => {
+        {fetchedQuestionData.questions[0].answers.map((answer, index) => {
           return (
-            <Box key={`question-${question.title}-${index}`} mb={4}>
-              <Answer contentID={answerID} />
+            <Box key={`question-${answer.id}-${index}`} mb={4}>
+              <Answer details={answer} />
             </Box>
           );
         })}
