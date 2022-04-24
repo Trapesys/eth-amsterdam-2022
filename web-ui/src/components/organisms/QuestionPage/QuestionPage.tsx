@@ -1,16 +1,14 @@
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  makeStyles
-} from '@material-ui/core';
+import { Box, Button, Divider, IconButton } from '@material-ui/core';
 import ArchiveRoundedIcon from '@material-ui/icons/ArchiveRounded';
 import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createClient } from 'urql';
+import { AbiItem } from 'web3-utils';
+import config from '../../../config';
 import Config from '../../../config';
+import Web3Context from '../../../context/Web3Context';
+import StakingABI from '../../../contract/Stake.json';
 import LoadingIndicator from '../../atoms/LoadingIndicator/LoadingIndicator';
 import SectionTitle from '../../atoms/SectionTitle/SectionTitle';
 import Answer from '../../molecules/Answer/Answer';
@@ -24,6 +22,8 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
   const { contentID } = useParams();
 
   const navigate = useNavigate();
+
+  const { web3Account, web3Context } = useContext(Web3Context);
 
   const constructQuery = (id: string) => {
     return `
@@ -89,6 +89,47 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
     return <LoadingIndicator />;
   }
 
+  const handleArchive = async () => {
+    if (web3Account == null || web3Context == null) {
+      openSnackbar('Wallet not connected', 'error');
+    }
+
+    try {
+      // @ts-ignore
+      let contract = new web3Context.eth.Contract(
+        StakingABI as AbiItem[],
+        config.STAKEOVERFLOW_CONTRACT_ADDRESS,
+        {
+          from: web3Account as string
+        }
+      );
+
+      await contract.methods.closeQuestion(contentID).send({
+        gas: 0
+      });
+
+      navigate('/');
+
+      openSnackbar('Question successfully archived', 'success');
+    } catch (err) {
+      openSnackbar('Unable to archive question', 'error');
+    }
+  };
+
+  const isQuestionPoster = () => {
+    if (
+      web3Account == null ||
+      web3Context == null ||
+      fetchedQuestionData.questions.length < 1
+    ) {
+      return false;
+    }
+
+    return (
+      fetchedQuestionData.questions[0].questioner === (web3Account as string)
+    );
+  };
+
   return (
     <Box display={'flex'} flexDirection={'column'}>
       <Box display={'flex'} justifyContent={'space-between'} mb={2}>
@@ -103,13 +144,16 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
           <SectionTitle title={'All Questions'} large />
         </Box>
         <Box>
-          <Button
-            variant={'outlined'}
-            color={'primary'}
-            startIcon={<ArchiveRoundedIcon />}
-          >
-            Archive
-          </Button>
+          {isQuestionPoster() && (
+            <Button
+              variant={'outlined'}
+              color={'primary'}
+              startIcon={<ArchiveRoundedIcon />}
+              onClick={handleArchive}
+            >
+              Archive
+            </Button>
+          )}
         </Box>
       </Box>
       <Question details={fetchedQuestionData.questions[0]} />
@@ -120,9 +164,6 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
         <SectionTitle title={'Post an answer'} />
       </Box>
       <Box mb={4}>
-        {
-          // TODO change
-        }
         <AnswerField contentID={fetchedQuestionData.questions[0].id} />
       </Box>
 
@@ -133,7 +174,7 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
         {fetchedQuestionData.questions[0].answers.map((answer, index) => {
           return (
             <Box key={`question-${answer.id}-${index}`} mb={4}>
-              <Answer details={answer} />
+              <Answer details={answer} questionID={contentID as string} />
             </Box>
           );
         })}
@@ -141,14 +182,5 @@ const QuestionPage: FC<IQuestionPageProps> = () => {
     </Box>
   );
 };
-
-const useStyles = makeStyles((theme) => {
-  return {
-    questionsWrapper: {
-      display: 'flex',
-      flexDirection: 'column'
-    }
-  };
-});
 
 export default QuestionPage;

@@ -1,7 +1,13 @@
 import { Box, Button, makeStyles, TextField } from '@material-ui/core';
 import CommentRoundedIcon from '@material-ui/icons/CommentRounded';
 import { useFormik } from 'formik';
-import React, { FC } from 'react';
+import { create } from 'ipfs-http-client';
+import React, { FC, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AbiItem } from 'web3-utils';
+import config from '../../../config';
+import Web3Context from '../../../context/Web3Context';
+import StakingABI from '../../../contract/Stake.json';
 import useSnackbar from '../Snackbar/useSnackbar.hook';
 import { IAnswerFieldProps } from './answerFiled.types';
 
@@ -12,14 +18,54 @@ const AnswerField: FC<IAnswerFieldProps> = (props) => {
 
   const { openSnackbar } = useSnackbar();
 
+  const { web3Account, web3Context } = useContext(Web3Context);
+
+  const navigate = useNavigate();
+
+  const handleAddAnswer = async (answer: string) => {
+    if (web3Account == null || web3Context == null) {
+      openSnackbar('Wallet not connected', 'error');
+    }
+
+    const ipfs = create({
+      url: config.IPFS_API_URL
+    });
+
+    const result = await ipfs!.add(
+      JSON.stringify({
+        body: answer
+      })
+    );
+
+    // @ts-ignore
+    let contract = new web3Context.eth.Contract(
+      StakingABI as AbiItem[],
+      config.STAKEOVERFLOW_CONTRACT_ADDRESS,
+      {
+        from: web3Account as string
+      }
+    );
+
+    await contract.methods.createAnswer(contentID, result.cid.toString()).send({
+      gas: 0
+    });
+  };
+
   const formik = useFormik({
     initialValues: {
       answer: ''
     },
     enableReinitialize: true,
     onSubmit: (values, { resetForm }) => {
-      // TODO submit form
-      openSnackbar('Answer submitted!', 'success');
+      handleAddAnswer(values.answer)
+        .then(() => {
+          openSnackbar('Answer successfully added', 'success');
+        })
+        .catch((err) => {
+          console.log(err);
+
+          openSnackbar('Unable to add answer', 'error');
+        });
 
       resetForm();
     }

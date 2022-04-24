@@ -11,15 +11,22 @@ import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import clsx from 'clsx';
 import moment from 'moment';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AbiItem } from 'web3-utils';
+import config from '../../../config';
+import Web3Context from '../../../context/Web3Context';
+import StakingABI from '../../../contract/Stake.json';
 import theme from '../../../theme/theme';
 import useSnackbar from '../Snackbar/useSnackbar.hook';
 import { IAnswerProps } from './answer.types';
 
 const Answer: FC<IAnswerProps> = (props) => {
-  const { details } = props;
+  const { details, questionID } = props;
 
   const classes = useStyles();
+
+  const { web3Account, web3Context } = useContext(Web3Context);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -36,8 +43,39 @@ const Answer: FC<IAnswerProps> = (props) => {
   }
 
   const { openSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const [description, setDescription] = useState<string>('');
+
+  const handleMarkUseful = async (questionID: string, answerID: string) => {
+    if (web3Account == null || web3Context == null) {
+      openSnackbar('Wallet not connected', 'error');
+    }
+
+    try {
+      // @ts-ignore
+      let contract = new web3Context.eth.Contract(
+        StakingABI as AbiItem[],
+        config.STAKEOVERFLOW_CONTRACT_ADDRESS,
+        {
+          from: web3Account as string
+        }
+      );
+
+      const amountInEth = Number.parseInt('5') * 10 ** 18;
+
+      await contract.methods.rewardFromPool(questionID, answerID).send({
+        gas: 0,
+        value: amountInEth
+      });
+
+      navigate('/');
+
+      openSnackbar('Answer successfully rewarded', 'success');
+    } catch (err) {
+      openSnackbar('Unable to award answer', 'error');
+    }
+  };
 
   useEffect(() => {
     fetch(details.uri)
@@ -58,7 +96,25 @@ const Answer: FC<IAnswerProps> = (props) => {
     >
       <Box width={'100%'} display={'flex'}>
         <Box ml={'auto'}>
-          <IconButton onClick={handleClick}>
+          <IconButton
+            onClick={() => {
+              handleMarkUseful(questionID, details.id)
+                .then(() => {
+                  openSnackbar(
+                    'Successfully marked answer as useful',
+                    'success'
+                  );
+                })
+                .catch((err) => {
+                  console.log(err);
+
+                  openSnackbar('Unable to mark answer as useful', 'error');
+                });
+
+              // TODO check this
+              handleClick(null);
+            }}
+          >
             <ExpandMoreRoundedIcon />
           </IconButton>
           <Menu

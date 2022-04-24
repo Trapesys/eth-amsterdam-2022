@@ -13,7 +13,12 @@ import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import clsx from 'clsx';
 import moment from 'moment';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AbiItem } from 'web3-utils';
+import config from '../../../config';
+import Web3Context from '../../../context/Web3Context';
+import StakingABI from '../../../contract/Stake.json';
 import theme from '../../../theme/theme';
 import useSnackbar from '../Snackbar/useSnackbar.hook';
 import { ReactComponent as Resolved } from './../../../shared/assets/icons/verified_black_24dp.svg';
@@ -22,6 +27,8 @@ import { IQuestionProps } from './question.types';
 const Question: FC<IQuestionProps> = (props) => {
   const classes = useStyles();
   const { details } = props;
+
+  const { web3Account, web3Context } = useContext(Web3Context);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -54,6 +61,38 @@ const Question: FC<IQuestionProps> = (props) => {
         openSnackbar('Unable to fetch question body', 'error');
       });
   }, [details]);
+
+  const navigate = useNavigate();
+
+  const handleBountyAddition = async () => {
+    if (web3Account == null || web3Context == null) {
+      openSnackbar('Wallet not connected', 'error');
+    }
+
+    try {
+      // @ts-ignore
+      let contract = new web3Context.eth.Contract(
+        StakingABI as AbiItem[],
+        config.STAKEOVERFLOW_CONTRACT_ADDRESS,
+        {
+          from: web3Account as string
+        }
+      );
+
+      const amountInEth = Number.parseInt('5') * 10 ** 18;
+
+      await contract.methods.stakeToQuestion(details.id).send({
+        gas: 0,
+        value: amountInEth
+      });
+
+      navigate('/');
+
+      openSnackbar('Question successfully staked', 'success');
+    } catch (err) {
+      openSnackbar('Unable to stake question', 'error');
+    }
+  };
 
   const renderTitle = () => {
     if (details.totalReward !== '0') {
@@ -102,7 +141,23 @@ const Question: FC<IQuestionProps> = (props) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>Add to bounty</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleBountyAddition()
+                  .then(() => {
+                    openSnackbar('Successfully added bounty', 'success');
+                  })
+                  .catch((err) => {
+                    console.log(err);
+
+                    openSnackbar('Unable to add bounty', 'error');
+                  });
+
+                handleClose();
+              }}
+            >
+              Add to bounty
+            </MenuItem>
           </Menu>
         </Box>
       </Box>

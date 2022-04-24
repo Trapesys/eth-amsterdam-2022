@@ -51,7 +51,9 @@ const AllQuestions: FC<IAllQuestionsProps> = () => {
         console.log(data);
         const questionData: IQuestionFetchResult = data.data;
 
-        setFetchedQuestions(questionData);
+        if (!data.error) {
+          setFetchedQuestions(questionData);
+        }
       })
       .catch((err) => {
         console.log(err);
