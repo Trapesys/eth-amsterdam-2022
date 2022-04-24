@@ -13,14 +13,14 @@ import ArrowUpwardRoundedIcon from '@material-ui/icons/ArrowUpwardRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import clsx from 'clsx';
 import moment from 'moment';
-import React, { FC, useState } from 'react';
+import React, {FC, useState} from 'react';
 import theme from '../../../theme/theme';
-import { ReactComponent as Resolved } from './../../../shared/assets/icons/verified_black_24dp.svg';
-import { IQuestionProps } from './question.types';
+import {ReactComponent as Resolved} from './../../../shared/assets/icons/verified_black_24dp.svg';
+import {IQuestionProps} from './question.types';
 
 const Question: FC<IQuestionProps> = (props) => {
   const classes = useStyles();
-  const { details } = props;
+  const {details} = props;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -33,9 +33,9 @@ const Question: FC<IQuestionProps> = (props) => {
   };
 
   const renderTitle = () => {
-    if (details.isResolved) {
+    if (details.totalReward !== '0') {
       return (
-        <Badge badgeContent={<Resolved className={classes.resolvedIcon} />}>
+        <Badge badgeContent={<Resolved className={classes.resolvedIcon}/>}>
           <Typography className={classes.questionTitle}>
             {details.title}
           </Typography>
@@ -51,7 +51,7 @@ const Question: FC<IQuestionProps> = (props) => {
   return (
     <Box
       className={clsx(classes.questionWrapper, {
-        [classes.questionResolved]: details.isResolved
+        [classes.questionResolved]: details.totalReward !== '0'
       })}
     >
       <Box display={'flex'} alignItems={'center'}>
@@ -71,7 +71,7 @@ const Question: FC<IQuestionProps> = (props) => {
         </Box>
         <Box>
           <IconButton onClick={handleClick}>
-            <ExpandMoreRoundedIcon />
+            <ExpandMoreRoundedIcon/>
           </IconButton>
           <Menu
             anchorEl={anchorEl}
@@ -84,7 +84,10 @@ const Question: FC<IQuestionProps> = (props) => {
         </Box>
       </Box>
       <Box my={2}>
-        <Typography>{details.description}</Typography>
+        {
+          // TODO change
+        }
+        <Typography>{'DESCRIPTION'}</Typography>
       </Box>
       <Box display={'flex'} alignItems={'center'}>
         <Box display={'flex'} alignItems={'center'}>
@@ -96,9 +99,7 @@ const Question: FC<IQuestionProps> = (props) => {
             />
           </IconButton>
           <Box mx={1}>
-            <Typography className={classes.questionSpecific}>
-              {details.score}
-            </Typography>
+            <Typography className={classes.questionSpecific}>{0}</Typography>
           </Box>
           <IconButton>
             <ArrowDownwardRoundedIcon
@@ -112,17 +113,17 @@ const Question: FC<IQuestionProps> = (props) => {
         <Box display={'flex'} alignItems={'center'} ml={'auto'}>
           <Box mr={'5px'} display={'flex'}>
             <Typography className={classes.questionSpecific}>
-              {`${details.amount} ETH ·`}
+              {`${+details.totalReward + +details.currentStaked} ETH ·`}
             </Typography>
           </Box>
           <Box mr={'5px'} maxWidth={'150px'} className={'truncate'}>
             <Typography className={clsx(classes.questionSpecific, 'truncate')}>
-              {`${details.posterAddress} ·`}
+              {`${details.questioner} ·`}
             </Typography>
           </Box>
           <Box>
             <Typography className={classes.questionSpecific}>
-              {moment.unix(details.postingDate).format('DD.MM.YYYY.')}
+              {moment.unix(details.createdBlockTimestamp).format('DD.MM.YYYY.')}
             </Typography>
           </Box>
         </Box>

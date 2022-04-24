@@ -14,16 +14,16 @@ import {
 import ArrowBackRoundedIcon from '@material-ui/icons/ArrowBackRounded';
 import SendRoundedIcon from '@material-ui/icons/SendRounded';
 import { useFormik } from 'formik';
-import { AbiItem } from 'web3-utils';
-import React, { FC, useContext, useState } from 'react';
+import { create } from 'ipfs-http-client';
+import React, { FC, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AbiItem } from 'web3-utils';
+import config from '../../../config';
 import Web3Context from '../../../context/Web3Context';
 import SectionTitle from '../../atoms/SectionTitle/SectionTitle';
 import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
-import { INewQuestionProps } from './newQuestion.types';
 import StakingABI from './../../../contract/Stake.json';
-import { create, CID, IPFSHTTPClient } from 'ipfs-http-client';
-import config from '../../../config';
+import { INewQuestionProps } from './newQuestion.types';
 
 //const URL = `https://ipfs.io/ipfs/Qmd5Vv6Egjc11LB27qF9dMDg4wCwzZA5GM4oNN1gyqLq1J`;
 
@@ -55,9 +55,6 @@ const NewQuestion: FC<INewQuestionProps> = () => {
         return;
       }
 
-      console.log('web3Account', web3Account);
-      console.log('values', values);
-
       const ipfs = create({
         url: config.IPFS_API_URL
       });
@@ -73,17 +70,6 @@ const NewQuestion: FC<INewQuestionProps> = () => {
         })
       );
 
-      console.log('upload to IPFS', {
-        title: values.title,
-        amount: amountInEth,
-        body: values.question,
-        tags: values.tags
-      });
-
-      console.log(
-        'REACT_APP_STAKEOVERFLOW_CONTRACT_ADDRESS',
-        config.STAKEOVERFLOW_CONTRACT_ADDRESS
-      );
       let contract = new web3Context.eth.Contract(
         StakingABI as AbiItem[],
         config.STAKEOVERFLOW_CONTRACT_ADDRESS,
@@ -92,21 +78,12 @@ const NewQuestion: FC<INewQuestionProps> = () => {
         }
       );
 
-      console.log(
-        'createQuestion',
-        result.cid.toString(),
-        values.title,
-        values.tags
-      );
-
-      const tx = await contract.methods
+      await contract.methods
         .createQuestion(result.cid.toString(), values.title, values.tags)
         .send({
           gas: 0,
           value: amountInEth
         });
-
-      console.log('tx', tx);
 
       resetForm();
 
@@ -116,14 +93,13 @@ const NewQuestion: FC<INewQuestionProps> = () => {
     }
   });
 
-  // TODO uncomment
-  // useEffect(() => {
-  //   if (!web3Account) {
-  //     navigate('/');
-  //
-  //     openSnackbar('Wallet not connected', 'error');
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!web3Account) {
+      navigate('/');
+
+      openSnackbar('Wallet not connected', 'error');
+    }
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     formik.setFieldValue('tags', event.target.value as string[]);
