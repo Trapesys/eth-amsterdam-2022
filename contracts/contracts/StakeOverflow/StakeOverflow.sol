@@ -98,6 +98,24 @@ contract StakeOverflow is IStakeOverflow, StakeOverflowStorage, Ownable {
         return _content.tokenURI(contentID);
     }
 
+    function stakedAmount(uint256 questionID, address addr)
+        public
+        view
+        onlyQuestionExisted(questionID)
+        returns (uint256)
+    {
+        return _pooledAmount[questionID][addr];
+    }
+
+    function rewardedAmount(uint256 questionID, address addr)
+        public
+        view
+        onlyQuestionExisted(questionID)
+        returns (uint256)
+    {
+        return _rewardedAmount[questionID][addr];
+    }
+
     function withdrawFee() public onlyOwner {
         _totalFee = 0;
         payable(msg.sender).transfer(_totalFee);
