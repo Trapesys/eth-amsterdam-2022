@@ -35,7 +35,7 @@ type Answer @entity {
 
 type Contributor @entity {
   id: ID!
-  numAnswered: String!
-  numRewarded: String!
+  numAnswered: Int!
+  numRewarded: Int!
   totalReward: String!
 }

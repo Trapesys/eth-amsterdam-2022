@@ -6,7 +6,7 @@ import {
   Rewarded,
   StakedToQuestion,
 } from "../generated/StakeOverflow/StakeOverflow";
-import { Question, Answer } from "../generated/schema";
+import { Question, Answer, Contributor } from "../generated/schema";
 
 const zero = BigInt.fromI32(0);
 const one = BigInt.fromI32(1);
@@ -22,6 +22,8 @@ export function handleNewQuestionAdded(event: NewQuestionAdded): void {
   question.questioner = event.params.questioner.toHexString();
   question.uri = event.params.contentURI;
   question.createdTxHash = event.transaction.hash.toHexString();
+  question.createdBlockHash = event.block.hash.toHexString();
+  question.createdBlockTimestamp = event.block.timestamp.toI32();
   question.status = "open";
   question.title = event.params.title;
   question.tags = event.params.tags;
@@ -86,9 +88,23 @@ export function handleNewAnswerAdded(event: NewAnswerAdded): void {
   answer.answerer = event.params.answerer.toHexString();
   answer.uri = event.params.contentURI;
   answer.createdTxHash = event.transaction.hash.toHexString();
+  answer.createdBlockHash = event.block.hash.toHexString();
+  answer.createdBlockTimestamp = event.block.timestamp.toI32();
   answer.receivedReward = zero.toString();
 
   answer.save();
+
+  const contributorID = event.params.answerer.toHexString();
+  let contributor = Contributor.load(contributorID);
+  if (!contributor) {
+    contributor = new Contributor(contributorID);
+    contributor.numAnswered = 0;
+    contributor.numRewarded = 0;
+    contributor.totalReward = zero.toString();
+  }
+
+  contributor.numAnswered += 1;
+  contributor.save();
 }
 
 export function handleRewarded(event: Rewarded): void {
@@ -108,6 +124,22 @@ export function handleRewarded(event: Rewarded): void {
         .plus(event.params.questionerReward)
         .toString();
     }
+
+    const contributorID = event.params.questioner.toHexString();
+    let contributor = Contributor.load(contributorID);
+    if (!contributor) {
+      contributor = new Contributor(contributorID);
+      contributor.numAnswered = 0;
+      contributor.numRewarded = 0;
+      contributor.totalReward = zero.toString();
+    }
+
+    contributor.numRewarded += 1;
+    contributor.totalReward = BigInt.fromString(contributor.totalReward)
+      .plus(event.params.questionerReward)
+      .toString();
+
+    contributor.save();
   }
 
   const sumReward = event.params.answererReward.plus(
@@ -142,6 +174,31 @@ export function handleRewarded(event: Rewarded): void {
         .plus(event.params.answererReward)
         .toString();
     }
+
+    const contributorID = event.params.answerer.toHexString();
+    let contributor = Contributor.load(contributorID);
+    if (!contributor) {
+      contributor = new Contributor(contributorID);
+      contributor.numAnswered = 0;
+      contributor.numRewarded = 0;
+      contributor.totalReward = zero.toString();
+    }
+
+    contributor.numRewarded += 1;
+    contributor.totalReward = BigInt.fromString(contributor.totalReward)
+      .plus(event.params.answererReward)
+      .toString();
+
+    contributor.save();
+  }
+
+  if (!answer.rewardedBy) {
+    answer.rewardedBy = [];
+  }
+
+  const sender = event.params.sender.toHexString();
+  if (answer.rewardedBy.indexOf(sender) === -1) {
+    answer.rewardedBy.push(sender);
   }
 
   answer.save();
@@ -161,6 +218,8 @@ export function handleQuestionClosed(event: QuestionClosed): void {
   }
 
   question.closedTxHash = event.transaction.hash.toHexString();
+  question.closedBlockHash = event.block.hash.toHexString();
+  question.closedBlockTimestamp = event.block.timestamp.toI32();
 
   question.status = "close";
   question.save();

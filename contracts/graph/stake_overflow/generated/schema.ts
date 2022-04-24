@@ -21,6 +21,8 @@ export class Question extends Entity {
     this.set("title", Value.fromString(""));
     this.set("tags", Value.fromStringArray(new Array(0)));
     this.set("createdTxHash", Value.fromString(""));
+    this.set("createdBlockHash", Value.fromString(""));
+    this.set("createdBlockTimestamp", Value.fromI32(0));
     this.set("status", Value.fromString(""));
     this.set("numAnswers", Value.fromString(""));
     this.set("currentStaked", Value.fromString(""));
@@ -98,6 +100,24 @@ export class Question extends Entity {
     this.set("createdTxHash", Value.fromString(value));
   }
 
+  get createdBlockHash(): string {
+    let value = this.get("createdBlockHash");
+    return value!.toString();
+  }
+
+  set createdBlockHash(value: string) {
+    this.set("createdBlockHash", Value.fromString(value));
+  }
+
+  get createdBlockTimestamp(): i32 {
+    let value = this.get("createdBlockTimestamp");
+    return value!.toI32();
+  }
+
+  set createdBlockTimestamp(value: i32) {
+    this.set("createdBlockTimestamp", Value.fromI32(value));
+  }
+
   get closedTxHash(): string | null {
     let value = this.get("closedTxHash");
     if (!value || value.kind == ValueKind.NULL) {
@@ -113,6 +133,32 @@ export class Question extends Entity {
     } else {
       this.set("closedTxHash", Value.fromString(<string>value));
     }
+  }
+
+  get closedBlockHash(): string | null {
+    let value = this.get("closedBlockHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set closedBlockHash(value: string | null) {
+    if (!value) {
+      this.unset("closedBlockHash");
+    } else {
+      this.set("closedBlockHash", Value.fromString(<string>value));
+    }
+  }
+
+  get closedBlockTimestamp(): i32 {
+    let value = this.get("closedBlockTimestamp");
+    return value!.toI32();
+  }
+
+  set closedBlockTimestamp(value: i32) {
+    this.set("closedBlockTimestamp", Value.fromI32(value));
   }
 
   get status(): string {
@@ -179,7 +225,9 @@ export class Answer extends Entity {
     this.set("answerer", Value.fromString(""));
     this.set("uri", Value.fromString(""));
     this.set("createdTxHash", Value.fromString(""));
+    this.set("createdBlockHash", Value.fromString(""));
     this.set("receivedReward", Value.fromString(""));
+    this.set("rewardedBy", Value.fromStringArray(new Array(0)));
   }
 
   save(): void {
@@ -243,6 +291,24 @@ export class Answer extends Entity {
     this.set("createdTxHash", Value.fromString(value));
   }
 
+  get createdBlockHash(): string {
+    let value = this.get("createdBlockHash");
+    return value!.toString();
+  }
+
+  set createdBlockHash(value: string) {
+    this.set("createdBlockHash", Value.fromString(value));
+  }
+
+  get createdBlockTimestamp(): i32 {
+    let value = this.get("createdBlockTimestamp");
+    return value!.toI32();
+  }
+
+  set createdBlockTimestamp(value: i32) {
+    this.set("createdBlockTimestamp", Value.fromI32(value));
+  }
+
   get receivedReward(): string {
     let value = this.get("receivedReward");
     return value!.toString();
@@ -250,5 +316,77 @@ export class Answer extends Entity {
 
   set receivedReward(value: string) {
     this.set("receivedReward", Value.fromString(value));
+  }
+
+  get rewardedBy(): Array<string> {
+    let value = this.get("rewardedBy");
+    return value!.toStringArray();
+  }
+
+  set rewardedBy(value: Array<string>) {
+    this.set("rewardedBy", Value.fromStringArray(value));
+  }
+}
+
+export class Contributor extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+
+    this.set("numAnswered", Value.fromI32(0));
+    this.set("numRewarded", Value.fromI32(0));
+    this.set("totalReward", Value.fromString(""));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Contributor entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Contributor must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Contributor", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Contributor | null {
+    return changetype<Contributor | null>(store.get("Contributor", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get numAnswered(): i32 {
+    let value = this.get("numAnswered");
+    return value!.toI32();
+  }
+
+  set numAnswered(value: i32) {
+    this.set("numAnswered", Value.fromI32(value));
+  }
+
+  get numRewarded(): i32 {
+    let value = this.get("numRewarded");
+    return value!.toI32();
+  }
+
+  set numRewarded(value: i32) {
+    this.set("numRewarded", Value.fromI32(value));
+  }
+
+  get totalReward(): string {
+    let value = this.get("totalReward");
+    return value!.toString();
+  }
+
+  set totalReward(value: string) {
+    this.set("totalReward", Value.fromString(value));
   }
 }
