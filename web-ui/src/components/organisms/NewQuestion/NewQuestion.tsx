@@ -21,93 +21,96 @@ import Web3Context from '../../../context/Web3Context';
 import SectionTitle from '../../atoms/SectionTitle/SectionTitle';
 import useSnackbar from '../../molecules/Snackbar/useSnackbar.hook';
 import { INewQuestionProps } from './newQuestion.types';
-import StakingABI from './../../../contract/Stake.json'
+import StakingABI from './../../../contract/Stake.json';
 import { create, CID, IPFSHTTPClient } from 'ipfs-http-client';
+import config from '../../../config';
 
-const IPFS_API_URL = 'https://ipfs.infura.io:5001/api/v0';
-
-const URL = `https://ipfs.io/ipfs/Qmd5Vv6Egjc11LB27qF9dMDg4wCwzZA5GM4oNN1gyqLq1J`;
-
+//const URL = `https://ipfs.io/ipfs/Qmd5Vv6Egjc11LB27qF9dMDg4wCwzZA5GM4oNN1gyqLq1J`;
 
 const NewQuestion: FC<INewQuestionProps> = () => {
   const classes = useStyles();
 
   const names: string[] = ['Go', 'Polygon', 'The Graph'];
 
-  const { web3Account,web3Context } = useContext(Web3Context);
+  const { web3Account, web3Context } = useContext(Web3Context);
 
   const { openSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
-
-  const address = "0x9428cDde24fdA107944889FE1c298f60DC062975"
 
   const formik = useFormik({
     initialValues: {
       title: '',
       amount: '',
       question: '',
-      tags: [],
+      tags: []
     },
     enableReinitialize: true,
-    onSubmit: async(values, { resetForm }) => {
+    onSubmit: async (values, { resetForm }) => {
       if (web3Account == null || web3Context == null) {
-        openSnackbar('Wallet not connected', 'error')
+        openSnackbar('Wallet not connected', 'error');
 
-        navigate('/')
+        navigate('/');
 
-        return
+        return;
       }
-
 
       console.log('web3Account', web3Account);
       console.log('values', values);
 
       const ipfs = create({
-        url: IPFS_API_URL
+        url: config.IPFS_API_URL
       });
 
-      const amountInEth = Number.parseInt(values.amount) * 10**18
+      const amountInEth = Number.parseInt(values.amount) * 10 ** 18;
 
       const result = await ipfs!.add(
-          JSON.stringify({
-            title: values.title,
-            amount: amountInEth,
-            body: values.question,
-            tags: values.tags,
-          })
-        );
+        JSON.stringify({
+          title: values.title,
+          amount: amountInEth,
+          body: values.question,
+          tags: values.tags
+        })
+      );
 
       console.log('upload to IPFS', {
         title: values.title,
         amount: amountInEth,
         body: values.question,
-        tags: values.tags,
-      })
+        tags: values.tags
+      });
 
-
-
+      console.log(
+        'REACT_APP_STAKEOVERFLOW_CONTRACT_ADDRESS',
+        config.STAKEOVERFLOW_CONTRACT_ADDRESS
+      );
       let contract = new web3Context.eth.Contract(
         StakingABI as AbiItem[],
-        address,
+        config.STAKEOVERFLOW_CONTRACT_ADDRESS,
         {
           from: web3Account as string
         }
       );
 
-      console.log('createQuestion', result.cid.toString(), values.title, values.tags)
+      console.log(
+        'createQuestion',
+        result.cid.toString(),
+        values.title,
+        values.tags
+      );
 
-      const tx = await contract.methods.createQuestion(result.cid.toString(), values.title, values.tags).send({
-        gas: 0,
-        value: amountInEth
-      });
+      const tx = await contract.methods
+        .createQuestion(result.cid.toString(), values.title, values.tags)
+        .send({
+          gas: 0,
+          value: amountInEth
+        });
 
-      console.log('tx', tx)
+      console.log('tx', tx);
 
       resetForm();
 
-      openSnackbar('Posted new question!', 'success')
-
+      openSnackbar('Posted new question!', 'success');
 
       navigate('/');
     }
@@ -122,9 +125,8 @@ const NewQuestion: FC<INewQuestionProps> = () => {
   //   }
   // }, []);
 
-
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    formik.setFieldValue('tags', event.target.value as string[])
+    formik.setFieldValue('tags', event.target.value as string[]);
   };
 
   return (
@@ -271,8 +273,7 @@ const useStyles = makeStyles((theme) => {
     submitButton: {
       fontWeight: 700,
       fontSize: theme.typography.pxToRem(16),
-      borderRadius: '15px',
-      marginLeft: 'auto !important'
+      borderRadius: '15px'
     }
   };
 });

@@ -7,8 +7,9 @@ import Web3 from 'web3';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { useState, useEffect } from 'react';
 import useSnackbar from '../Snackbar/useSnackbar.hook';
-var Contract = require('web3-eth-contract');
+import Config from "../../../config"
 
+var Contract = require('web3-eth-contract');
 
 const UserMenu: FC<IUserMenuProps> = () => {
   const [walletName, setWalletName] = useState<string>('Connect Wallet');
@@ -27,7 +28,7 @@ const UserMenu: FC<IUserMenuProps> = () => {
     //  Create WalletConnect Provider
     const Provider = new WalletConnectProvider({
       rpc: {
-        100: 'https://rpc-edgenet.polygon.technology/'
+        100: Config.POLYGON_EDGE_API
         // ...
       },
       qrcodeModalOptions: {

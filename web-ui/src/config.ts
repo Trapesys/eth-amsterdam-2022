@@ -1,0 +1,30 @@
+const {
+    REACT_APP_POLYGON_EDGE_API,
+    REACT_APP_POLYGON_EDGE_CHAIN_ID,
+    REACT_APP_STAKEOVERFLOW_CONTRACT_ADDRESS,
+    REACT_APP_IPFS_API_URL,
+  } = process.env;
+  
+  if (!REACT_APP_POLYGON_EDGE_API) {
+    throw Error('REACT_APP_POLYGON_EDGE_API property not found in .env');
+  }
+  
+  if (!REACT_APP_POLYGON_EDGE_CHAIN_ID) {
+    throw Error('REACT_APP_POLYGON_EDGE_CHAIN_ID property not found in .env');
+  }
+
+  if (!REACT_APP_STAKEOVERFLOW_CONTRACT_ADDRESS) {
+    throw Error('REACT_APP_STAKEOVERFLOW_CONTRACT_ID property not found in .env');
+  }
+
+  if (!REACT_APP_IPFS_API_URL) {
+    throw Error('REACT_APP_IPFS_API_URL property not found in .env');
+  }
+
+  
+  export default {
+    POLYGON_EDGE_API: REACT_APP_POLYGON_EDGE_API,
+    POLYGON_EDGE_CHAIN_ID: REACT_APP_POLYGON_EDGE_CHAIN_ID,
+    STAKEOVERFLOW_CONTRACT_ADDRESS:REACT_APP_STAKEOVERFLOW_CONTRACT_ADDRESS,
+    IPFS_API_URL:REACT_APP_IPFS_API_URL
+  };
