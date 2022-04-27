@@ -105,10 +105,12 @@ const Searchbar: FC<ISearchBarProps> = () => {
       setOpen(true);
 
       fetchSearchResults()
-        .then((data) => {
+        .then((data: any) => {
           let items = [];
 
-          let identities = renderIdentitiesSection(data);
+          console.log('DATA IS ', data);
+          let identities = renderIdentitiesSection(data.questions);
+          console.log(identities);
           if (identities) {
             items.push(identities);
           }

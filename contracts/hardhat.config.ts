@@ -30,7 +30,8 @@ const config: HardhatUserConfig = {
   solidity: "0.8.13",
   networks: {
     polygonedge: {
-      url: process.env.JSONRPC_URL ?? "http://localhost:10002",
+      url: "https://rpc-edgenet.polygon.technology",
+      // url: "http://localhost:10001",
       accounts: [...privateKeys],
     },
   },

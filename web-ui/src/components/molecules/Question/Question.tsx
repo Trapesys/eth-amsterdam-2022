@@ -14,7 +14,7 @@ import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import clsx from 'clsx';
 import moment from 'moment';
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AbiItem } from 'web3-utils';
 import config from '../../../config';
 import Web3Context from '../../../context/Web3Context';
@@ -51,10 +51,16 @@ const Question: FC<IQuestionProps> = (props) => {
 
   const { openSnackbar } = useSnackbar();
 
+  const stringReplacer = (input: string) => {
+    return input.replace('https://ipfs.io', 'https://infura-ipfs.io');
+  };
+
   useEffect(() => {
-    fetch(details.uri)
+    console.log(details.uri);
+    fetch(stringReplacer(details.uri))
       .then((result) => result.json())
       .then((data) => {
+        console.log(data);
         setDescription((data as IPFSQuestionData).body);
       })
       .catch((err) => {
@@ -98,15 +104,33 @@ const Question: FC<IQuestionProps> = (props) => {
     if (details.totalReward !== '0') {
       return (
         <Badge badgeContent={<Resolved className={classes.resolvedIcon} />}>
-          <Typography className={classes.questionTitle}>
-            {details.title}
-          </Typography>
+          <Link
+            to={`/question/${details.id}`}
+            style={{
+              textDecoration: 'none',
+              color: 'black'
+            }}
+          >
+            <Typography className={classes.questionTitle}>
+              {details.title}
+            </Typography>
+          </Link>
         </Badge>
       );
     }
 
     return (
-      <Typography className={classes.questionTitle}>{details.title}</Typography>
+      <Link
+        to={`/question/${details.id}`}
+        style={{
+          textDecoration: 'none',
+          color: 'black'
+        }}
+      >
+        <Typography className={classes.questionTitle}>
+          {details.title}
+        </Typography>
+      </Link>
     );
   };
 
@@ -188,7 +212,9 @@ const Question: FC<IQuestionProps> = (props) => {
         <Box display={'flex'} alignItems={'center'} ml={'auto'}>
           <Box mr={'5px'} display={'flex'}>
             <Typography className={classes.questionSpecific}>
-              {`${+details.totalReward + +details.currentStaked} ETH ·`}
+              {`${
+                (+details.totalReward + +details.currentStaked) / 10 ** 18
+              } EDGE ·`}
             </Typography>
           </Box>
           <Box mr={'5px'} maxWidth={'150px'} className={'truncate'}>

@@ -419,6 +419,70 @@ export class StakeOverflow extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
+
+  rewardedAmount(questionID: BigInt, addr: Address): BigInt {
+    let result = super.call(
+      "rewardedAmount",
+      "rewardedAmount(uint256,address):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(questionID),
+        ethereum.Value.fromAddress(addr)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_rewardedAmount(
+    questionID: BigInt,
+    addr: Address
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "rewardedAmount",
+      "rewardedAmount(uint256,address):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(questionID),
+        ethereum.Value.fromAddress(addr)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  stakedAmount(questionID: BigInt, addr: Address): BigInt {
+    let result = super.call(
+      "stakedAmount",
+      "stakedAmount(uint256,address):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(questionID),
+        ethereum.Value.fromAddress(addr)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_stakedAmount(
+    questionID: BigInt,
+    addr: Address
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "stakedAmount",
+      "stakedAmount(uint256,address):(uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(questionID),
+        ethereum.Value.fromAddress(addr)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
 }
 
 export class ConstructorCall extends ethereum.Call {

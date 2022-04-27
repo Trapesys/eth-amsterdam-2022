@@ -62,11 +62,10 @@ const Answer: FC<IAnswerProps> = (props) => {
         }
       );
 
-      const amountInEth = Number.parseInt('5') * 10 ** 18;
-
+      console.log(questionID);
+      console.log(answerID);
       await contract.methods.rewardFromPool(questionID, answerID).send({
-        gas: 0,
-        value: amountInEth
+        gas: 0
       });
 
       navigate('/');
@@ -77,10 +76,16 @@ const Answer: FC<IAnswerProps> = (props) => {
     }
   };
 
+  const stringReplacer = (input: string) => {
+    return input.replace('https://ipfs.io', 'https://infura-ipfs.io');
+  };
+  //details.uri
+
   useEffect(() => {
-    fetch(details.uri)
+    fetch(stringReplacer(details.uri))
       .then((result) => result.json())
       .then((data) => {
+        console.log(data);
         setDescription((data as IPFSAnswerData).body);
       })
       .catch((err) => {
@@ -96,25 +101,7 @@ const Answer: FC<IAnswerProps> = (props) => {
     >
       <Box width={'100%'} display={'flex'}>
         <Box ml={'auto'}>
-          <IconButton
-            onClick={() => {
-              handleMarkUseful(questionID, details.id)
-                .then(() => {
-                  openSnackbar(
-                    'Successfully marked answer as useful',
-                    'success'
-                  );
-                })
-                .catch((err) => {
-                  console.log(err);
-
-                  openSnackbar('Unable to mark answer as useful', 'error');
-                });
-
-              // TODO check this
-              handleClick(null);
-            }}
-          >
+          <IconButton onClick={handleClick}>
             <ExpandMoreRoundedIcon />
           </IconButton>
           <Menu
@@ -123,7 +110,27 @@ const Answer: FC<IAnswerProps> = (props) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>Mark as helpful</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleMarkUseful(questionID, details.id)
+                  .then(() => {
+                    openSnackbar(
+                      'Successfully marked answer as useful',
+                      'success'
+                    );
+                  })
+                  .catch((err) => {
+                    console.log(err);
+
+                    openSnackbar('Unable to mark answer as useful', 'error');
+                  });
+
+                // TODO check this
+                handleClose();
+              }}
+            >
+              Mark as helpful
+            </MenuItem>
           </Menu>
         </Box>
       </Box>
