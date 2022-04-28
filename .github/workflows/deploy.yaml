@@ -10,19 +10,17 @@ jobs:
     steps:
       - 
         name: Chekout code
-        uses: actions/checkout@v2
-    
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_REACT_APP_POLYGON_EDGE_API: https://rpc-edgenet.polygon.technology/
-          envkey_REACT_APP_POLYGON_EDGE_CHAIN_ID: "0x64"
-          envkey_REACT_APP_STAKEOVERFLOW_CONTRACT_ADDRESS: "0x39Ae75233F54985440F7139e1B0bc1BDCa2E67b9"
-          envkey_REACT_APP_IPFS_API_URL: https://ipfs.infura.io:5001/api/v0
-          envkey_REACT_APP_GRAPH_URL: https://graph.stakeoverflow.net:8000/subgraphs/name/NewStakeOverflow
-          directory: web-ui
-          file_name: .env
-          fail_on_empty: false
+        uses: actions/checkout@v2 
+      - 
+        name: Create env file
+        run: |
+          cd web-ui &&
+          touch .env
+          echo REACT_APP_POLYGON_EDGE_API=https://rpc-edgenet.polygon.technology >> .env
+          echo REACT_APP_POLYGON_EDGE_CHAIN_ID=0x64 >> .env
+          echo REACT_APP_STAKEOVERFLOW_CONTRACT_ADDRESS=0x39Ae75233F54985440F7139e1B0bc1BDCa2E67b9 >> .env
+          echo REACT_APP_IPFS_API_URL=https://ipfs.infura.io:5001/api/v0 >> .env
+          echo REACT_APP_GRAPH_URL=https://graph.stakeoverflow.net:8000/subgraphs/name/NewStakeOverflow >> .env
       - 
         name: Build frontend
         run: |
