@@ -11,6 +11,8 @@ jobs:
       - 
         name: Chekout code
         uses: actions/checkout@v2
+        with:
+          path: .
       - 
         name: Build frontend
         run: |
